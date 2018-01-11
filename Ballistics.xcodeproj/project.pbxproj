@@ -7,15 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C6BC3CB2007AD2A00C062D7 /* MapBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6BC3CA2007AD2A00C062D7 /* MapBrain.swift */; };
 		6CCD5F3B1FFD5D85009018BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3A1FFD5D85009018BE /* AppDelegate.swift */; };
 		6CCD5F3D1FFD5D85009018BE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3C1FFD5D85009018BE /* ViewController.swift */; };
 		6CCD5F401FFD5D85009018BE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3E1FFD5D85009018BE /* Main.storyboard */; };
 		6CCD5F431FFD5D85009018BE /* Ballistics.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F411FFD5D85009018BE /* Ballistics.xcdatamodeld */; };
 		6CCD5F451FFD5D85009018BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CCD5F441FFD5D85009018BE /* Assets.xcassets */; };
 		6CCD5F481FFD5D85009018BE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CCD5F461FFD5D85009018BE /* LaunchScreen.storyboard */; };
+		6CCD5F501FFD6705009018BE /* TargetPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F4F1FFD6705009018BE /* TargetPin.swift */; };
+		6CD4024920057134002E9E0E /* LocationTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CD4024820057134002E9E0E /* LocationTranslation.swift */; };
+		6CF480731FFE7D3000BBEC58 /* sock 100x100.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CF480721FFE7D3000BBEC58 /* sock 100x100.png */; };
+		6CF480751FFE7D4800BBEC58 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CF480741FFE7D4700BBEC58 /* compass.png */; };
+		6CF480771FFE803100BBEC58 /* BallisticsBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */; };
+		6CF480791FFE805200BBEC58 /* GlobalSelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF480781FFE805200BBEC58 /* GlobalSelectionModel.swift */; };
+		6CF4807B1FFE812100BBEC58 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF4807A1FFE812100BBEC58 /* WeatherData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6C6BC3CA2007AD2A00C062D7 /* MapBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBrain.swift; sourceTree = "<group>"; };
 		6CCD5F371FFD5D85009018BE /* Ballistics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ballistics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CCD5F3A1FFD5D85009018BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6CCD5F3C1FFD5D85009018BE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -24,6 +33,13 @@
 		6CCD5F441FFD5D85009018BE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6CCD5F471FFD5D85009018BE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6CCD5F491FFD5D85009018BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6CCD5F4F1FFD6705009018BE /* TargetPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetPin.swift; sourceTree = "<group>"; };
+		6CD4024820057134002E9E0E /* LocationTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTranslation.swift; sourceTree = "<group>"; };
+		6CF480721FFE7D3000BBEC58 /* sock 100x100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sock 100x100.png"; sourceTree = "<group>"; };
+		6CF480741FFE7D4700BBEC58 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
+		6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallisticsBrain.swift; sourceTree = "<group>"; };
+		6CF480781FFE805200BBEC58 /* GlobalSelectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalSelectionModel.swift; sourceTree = "<group>"; };
+		6CF4807A1FFE812100BBEC58 /* WeatherData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,11 +53,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6C6BC3C92007AC1400C062D7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6CF480781FFE805200BBEC58 /* GlobalSelectionModel.swift */,
+				6CCD5F4F1FFD6705009018BE /* TargetPin.swift */,
+				6CF4807A1FFE812100BBEC58 /* WeatherData.swift */,
+				6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */,
+				6C6BC3CA2007AD2A00C062D7 /* MapBrain.swift */,
+				6CD4024820057134002E9E0E /* LocationTranslation.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		6CCD5F2E1FFD5D85009018BE = {
 			isa = PBXGroup;
 			children = (
+				6C6BC3C92007AC1400C062D7 /* Model */,
 				6CCD5F391FFD5D85009018BE /* Ballistics */,
 				6CCD5F381FFD5D85009018BE /* Products */,
+				6CF480721FFE7D3000BBEC58 /* sock 100x100.png */,
+				6CF480741FFE7D4700BBEC58 /* compass.png */,
 			);
 			sourceTree = "<group>";
 		};
@@ -127,8 +159,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				6CCD5F481FFD5D85009018BE /* LaunchScreen.storyboard in Resources */,
+				6CF480731FFE7D3000BBEC58 /* sock 100x100.png in Resources */,
 				6CCD5F451FFD5D85009018BE /* Assets.xcassets in Resources */,
 				6CCD5F401FFD5D85009018BE /* Main.storyboard in Resources */,
+				6CF480751FFE7D4800BBEC58 /* compass.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,9 +173,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6CCD5F501FFD6705009018BE /* TargetPin.swift in Sources */,
+				6CF480771FFE803100BBEC58 /* BallisticsBrain.swift in Sources */,
+				6C6BC3CB2007AD2A00C062D7 /* MapBrain.swift in Sources */,
+				6CF4807B1FFE812100BBEC58 /* WeatherData.swift in Sources */,
 				6CCD5F3D1FFD5D85009018BE /* ViewController.swift in Sources */,
+				6CF480791FFE805200BBEC58 /* GlobalSelectionModel.swift in Sources */,
 				6CCD5F431FFD5D85009018BE /* Ballistics.xcdatamodeld in Sources */,
 				6CCD5F3B1FFD5D85009018BE /* AppDelegate.swift in Sources */,
+				6CD4024920057134002E9E0E /* LocationTranslation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
