@@ -19,86 +19,98 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qj8-lh-q9Q">
-                                <rect key="frame" x="16" y="99" width="246" height="469"/>
+                                <rect key="frame" x="16" y="62" width="247" height="543"/>
                                 <color key="backgroundColor" red="0.26051741839999998" green="0.2605243921" blue="0.260520637" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="22" translatesAutoresizingMaskIntoConstraints="NO" id="SAE-vc-jUU" userLabel="Stack ViewL">
-                                <rect key="frame" x="212" y="107" width="50" height="452.5"/>
+                                <rect key="frame" x="212" y="71" width="51" height="525.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cQ8-yk-5aU">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bearing˚" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lhC-7j-hgx">
-                                        <rect key="frame" x="0.0" y="36.5" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="36.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Distance" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FQK-4h-cJP">
-                                        <rect key="frame" x="0.0" y="73" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="73" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Zero" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="clO-cy-TfC">
-                                        <rect key="frame" x="0.0" y="109.5" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="109.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVL-JT-sjy">
-                                        <rect key="frame" x="0.0" y="146" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="146" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BC" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lmk-bv-6vN">
-                                        <rect key="frame" x="0.0" y="182.5" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="182.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zlB-RS-ePW">
-                                        <rect key="frame" x="0.0" y="219" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="219" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Velocity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pt5-Hd-o4T">
-                                        <rect key="frame" x="0.0" y="255.5" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="255.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fkk-bW-I2D">
-                                        <rect key="frame" x="0.0" y="292" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="292" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Temp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NHE-ge-CMf">
-                                        <rect key="frame" x="0.0" y="328.5" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="328.5" width="51" height="14.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pressure" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1x7-ob-f7b">
+                                        <rect key="frame" x="0.0" y="365" width="51" height="14.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Humidity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Rl-W8-s3X">
+                                        <rect key="frame" x="0.0" y="401.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wind" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bz8-aZ-UeK">
-                                        <rect key="frame" x="0.0" y="365" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="438" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wind˚" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O83-uE-tv7">
-                                        <rect key="frame" x="0.0" y="401.5" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="474.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Altitude" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zFK-Is-cNj">
-                                        <rect key="frame" x="0.0" y="438" width="50" height="14.5"/>
+                                        <rect key="frame" x="0.0" y="511" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
@@ -106,7 +118,7 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="e8G-A5-RT9">
-                                <rect key="frame" x="16" y="99" width="194" height="469"/>
+                                <rect key="frame" x="16" y="62" width="194" height="543"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ballistic Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5qz-ID-Hu2">
                                         <rect key="frame" x="0.0" y="0.0" width="194" height="27.5"/>
@@ -120,6 +132,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="4ho-lw-tYr"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="MEy-ac-kXg"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Target Distance (yds)" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="YQh-SA-lp5">
                                         <rect key="frame" x="0.0" y="71.5" width="194" height="30"/>
@@ -127,6 +143,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="N8t-3J-ALk"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="1im-tX-yVy"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Zero Range (yds)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="iJO-nv-Y4E">
                                         <rect key="frame" x="0.0" y="108.5" width="194" height="30"/>
@@ -134,6 +154,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="ICk-hP-aSz"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="dbn-rQ-2WT"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Sight Height Above Bore (in)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3lN-HY-uwU">
                                         <rect key="frame" x="0.0" y="145.5" width="194" height="30"/>
@@ -141,6 +165,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="r9d-l4-Rde"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="L2o-fu-wk2"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Ballistic Coefficient" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Mjw-3g-hq9">
                                         <rect key="frame" x="0.0" y="182.5" width="194" height="30"/>
@@ -148,6 +176,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="3zC-ib-RBG"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="CUL-N3-fUv"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Weight (grains)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="kDR-St-haX">
                                         <rect key="frame" x="0.0" y="219.5" width="194" height="30"/>
@@ -155,6 +187,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="4Dz-tW-GiT"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="vYx-oL-l1d"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Muzzle Velocity (fps)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="gPC-7v-WFe">
                                         <rect key="frame" x="0.0" y="256.5" width="194" height="30"/>
@@ -162,6 +198,10 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="QNK-6W-T2I"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="CnM-kO-gYA"/>
+                                        </connections>
                                     </textField>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Environmental Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eGk-t9-2qa">
                                         <rect key="frame" x="0.0" y="293.5" width="194" height="27.5"/>
@@ -175,32 +215,70 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="7jF-Je-y4z"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="ZGO-kY-f1S"/>
+                                        </connections>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Wind Speed (mi/hr)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="6AH-Cb-tDQ">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="pressure (in/hg)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="HZa-2O-1oI">
                                         <rect key="frame" x="0.0" y="365" width="194" height="30"/>
                                         <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="hJf-PM-0iS"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="O0e-AE-LAO"/>
+                                        </connections>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Wind Direction (˚)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Yzt-Vs-gKr">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Humidity (%)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Sw9-qX-c2Z">
                                         <rect key="frame" x="0.0" y="402" width="194" height="30"/>
                                         <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="RnE-cJ-w3c"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="Zyz-iS-B4E"/>
+                                        </connections>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Altitude (yds)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="A0J-K2-Gct">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Wind Speed (mi/hr)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="6AH-Cb-tDQ">
                                         <rect key="frame" x="0.0" y="439" width="194" height="30"/>
                                         <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="REM-iJ-ANa"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="0hx-Ht-2qv"/>
+                                        </connections>
+                                    </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Wind Direction (˚)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Yzt-Vs-gKr">
+                                        <rect key="frame" x="0.0" y="476" width="194" height="30"/>
+                                        <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="8Ph-82-tWK"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="Q7F-Lx-Cu5"/>
+                                        </connections>
+                                    </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Altitude (yds)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="A0J-K2-Gct">
+                                        <rect key="frame" x="0.0" y="513" width="194" height="30"/>
+                                        <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="textFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="IVx-IW-EIL"/>
+                                            <action selector="touchUpInsideTextField:" destination="BYZ-38-t0r" eventType="editingDidBegin" id="hnN-bk-O9P"/>
+                                        </connections>
                                     </textField>
                                 </subviews>
                             </stackView>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="1OK-wR-MQd">
-                                <rect key="frame" x="314" y="64" width="61" height="559"/>
+                                <rect key="frame" x="336" y="64" width="39" height="559"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="559" id="FLd-Ba-ee4"/>
@@ -238,32 +316,33 @@
                                 </constraints>
                                 <items>
                                     <barButtonItem title="SetMicrophone" image="Mic" id="U4W-7z-ruR">
+                                        <color key="tintColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <connections>
-                                            <action selector="lowerBarButtonAction:" destination="BYZ-38-t0r" id="iCJ-La-4sh"/>
+                                            <action selector="barButtonAction:" destination="BYZ-38-t0r" id="c7T-cD-6OM"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Xfy-zo-Xrf"/>
                                     <barButtonItem title="SetAltitude" image="Mountain" id="P4Z-ub-atm">
                                         <connections>
-                                            <action selector="lowerBarButtonAction:" destination="BYZ-38-t0r" id="eg0-q1-5lw"/>
+                                            <action selector="barButtonAction:" destination="BYZ-38-t0r" id="IUe-Xd-cGz"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="urb-v3-WrC"/>
                                     <barButtonItem title="SetBearing" image="update" id="M2h-QR-uIO">
                                         <connections>
-                                            <action selector="lowerBarButtonAction:" destination="BYZ-38-t0r" id="xLY-MD-Hor"/>
+                                            <action selector="barButtonAction:" destination="BYZ-38-t0r" id="f3O-W6-DPD"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="ctx-SA-odo"/>
                                     <barButtonItem title="SetEnvironment" image="Environment" id="hUN-yJ-0Zw">
                                         <connections>
-                                            <action selector="lowerBarButtonAction:" destination="BYZ-38-t0r" id="LAK-v6-xDm"/>
+                                            <action selector="barButtonAction:" destination="BYZ-38-t0r" id="llu-kO-U7q"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="vsj-UW-mCI"/>
                                     <barButtonItem title="SetTarget" image="ballistics" id="fav-Ro-lEZ">
                                         <connections>
-                                            <action selector="lowerBarButtonAction:" destination="BYZ-38-t0r" id="R6u-zd-fdi"/>
+                                            <action selector="barButtonAction:" destination="BYZ-38-t0r" id="WSP-hN-Ylk"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -299,32 +378,43 @@
                         <barButtonItem key="leftBarButtonItem" title="SetMenu" image="Menu" id="EsP-jV-TbP">
                             <color key="tintColor" red="0.37055522200000002" green="0.37056469920000001" blue="0.37055957319999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
-                                <action selector="menuButtonTapped:" destination="BYZ-38-t0r" id="BeK-DY-Wuz"/>
+                                <action selector="barButtonAction:" destination="BYZ-38-t0r" id="M44-WJ-rdZ"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="SetUnpin" image="Unpin" id="i9U-ay-UGT">
+                            <connections>
+                                <action selector="barButtonAction:" destination="BYZ-38-t0r" id="ajc-gV-9zf"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="altitude" destination="A0J-K2-Gct" id="oNu-GQ-wiS"/>
-                        <outlet property="ballisticCoefficient" destination="Mjw-3g-hq9" id="CFg-nN-IU5"/>
+                        <outlet property="altitudeButton" destination="P4Z-ub-atm" id="V2f-o3-ghy"/>
+                        <outlet property="altitudeTextField" destination="A0J-K2-Gct" id="dkq-OG-7hO"/>
+                        <outlet property="ballisticCoefficientTextField" destination="Mjw-3g-hq9" id="nNg-Vo-HFx"/>
+                        <outlet property="compassButton" destination="M2h-QR-uIO" id="ZqC-zX-7ku"/>
                         <outlet property="degreeLabel" destination="GYO-MP-p9T" id="ZDc-ap-kSO"/>
+                        <outlet property="environmentButton" destination="hUN-yJ-0Zw" id="2by-bw-ksa"/>
+                        <outlet property="humidityTextField" destination="Sw9-qX-c2Z" id="Oa1-mD-KiZ"/>
                         <outlet property="leadingC" destination="ChJ-iI-ymi" id="bVs-M1-b0Z"/>
                         <outlet property="mapView" destination="1OK-wR-MQd" id="Zaf-ba-gO4"/>
-                        <outlet property="muzzleVelocity" destination="gPC-7v-WFe" id="jg0-6V-SpP"/>
-                        <outlet property="sightHeight" destination="3lN-HY-uwU" id="l0h-kh-5TL"/>
+                        <outlet property="microphoneButton" destination="U4W-7z-ruR" id="g11-uO-tBZ"/>
+                        <outlet property="muzzleVelocityTextField" destination="gPC-7v-WFe" id="eaE-Y2-oAD"/>
+                        <outlet property="pressureTextField" destination="HZa-2O-1oI" id="KmZ-Pr-CH7"/>
+                        <outlet property="sightHeightTextField" destination="3lN-HY-uwU" id="o6R-Kd-SRK"/>
                         <outlet property="stackViewCenterC" destination="zDl-jr-dqe" id="Utm-rE-K1L"/>
                         <outlet property="stackViewLCenterC" destination="Vbh-Wz-sPf" id="CLD-qm-Rhe"/>
-                        <outlet property="targetBearing" destination="Tss-aO-P4a" id="Htw-Ql-RFg"/>
-                        <outlet property="targetDistance" destination="YQh-SA-lp5" id="wXh-y4-N5C"/>
-                        <outlet property="temperature" destination="OPv-ng-Yka" id="Fzo-u9-d6L"/>
+                        <outlet property="targetBearingTextField" destination="Tss-aO-P4a" id="tjr-aE-vXH"/>
+                        <outlet property="targetDistanceTextField" destination="YQh-SA-lp5" id="5Gr-Kv-0TR"/>
+                        <outlet property="temperatureTextField" destination="OPv-ng-Yka" id="NHI-kR-WNc"/>
                         <outlet property="view" destination="8bC-Xf-vdC" id="8cq-Jc-8CY"/>
                         <outlet property="viewBehindStackView" destination="qj8-lh-q9Q" id="suH-aB-VTb"/>
-                        <outlet property="weight" destination="kDR-St-haX" id="x4E-eg-iwy"/>
-                        <outlet property="windDirection" destination="Yzt-Vs-gKr" id="Jzu-WL-mHB"/>
+                        <outlet property="weightTextField" destination="kDR-St-haX" id="Lgk-u6-vmx"/>
+                        <outlet property="windDirectionTextField" destination="Yzt-Vs-gKr" id="JtP-mz-wGR"/>
                         <outlet property="windSock" destination="qzt-rM-Z6w" id="Ipp-AY-Wi4"/>
                         <outlet property="windSockRightC" destination="iCG-sl-BqF" id="vLV-gF-pOQ"/>
                         <outlet property="windSockTopC" destination="nuf-Ma-4IE" id="Gvi-Ru-HTn"/>
-                        <outlet property="windSpeed" destination="6AH-Cb-tDQ" id="yRK-ym-XwB"/>
-                        <outlet property="zeroRange" destination="iJO-nv-Y4E" id="uay-Hm-vP6"/>
+                        <outlet property="windSpeedTextField" destination="6AH-Cb-tDQ" id="FJe-5W-aDi"/>
+                        <outlet property="zeroRangeTextField" destination="iJO-nv-Y4E" id="ZQa-P2-unT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -360,6 +450,7 @@
         <image name="Menu" width="30" height="30"/>
         <image name="Mic" width="30" height="30"/>
         <image name="Mountain" width="30" height="30"/>
+        <image name="Unpin" width="30" height="30"/>
         <image name="ballistics" width="30" height="30"/>
         <image name="compass.png" width="100" height="100"/>
         <image name="sock 100x100.png" width="100" height="100"/>

@@ -24,10 +24,15 @@ struct MapBrain
             print("pressed altitude button")
         case "SetMicrophone":
             print("pressed microphone button")
+        case "SetMenu":
+            print("pressed menu button")
+        case "SetUnpin":
+            print("pressed unpin button")
         default:
             break
         }
-        
-        
     }
+    
+  
+    
 }

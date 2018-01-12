@@ -7,53 +7,63 @@
 //
 
 
-import UIKit
+import MapKit
 import Foundation
 
-struct BallisticsBrain {
+class BallisticsBrain
+{
 
     let GRAVITY = -(32.194)
     let _BCOMP_MAXRANGE_ = 50001
     
-    func DegtoMOA(deg: Double) -> Double{
+    func DegtoMOA(deg: Double) -> Double
+    {
         return deg*60
     }
     
-    func DegtoRad(deg: Double) -> Double{
+    func DegtoRad(deg: Double) -> Double
+    {
         return deg*Double.pi / 180
     }
     
-    func MOAtoDeg(moa: Double) -> Double{
+    func MOAtoDeg(moa: Double) -> Double
+    {
         return moa/60
     }
     
-    func MOAtoRad(moa: Double) -> Double{
+    func MOAtoRad(moa: Double) -> Double
+    {
         return moa/60*Double.pi/180
     }
     
-    func RadtoDeg(rad: Double) -> Double{
+    func RadtoDeg(rad: Double) -> Double
+    {
         return rad*180/Double.pi
     }
     
-    func RadtoMOA(rad: Double) -> Double{
+    func RadtoMOA(rad: Double) -> Double
+    {
         return rad*60*180/Double.pi
     }
     
     /// ############## Functions for correcting for atmosphere
-    func calcFR(Temperature: Double, Pressure: Double, RelativeHumidity: Double) -> Double{
+    func calcFR(Temperature: Double, Pressure: Double, RelativeHumidity: Double) -> Double
+    {
         let VPw=4e-6*pow(Temperature, 3) - 0.0004*pow(Temperature, 2)+0.0234*Temperature-0.2517
         let FRH = 0.995*(Pressure/(Pressure-(0.3783)*(RelativeHumidity)*VPw))
         return FRH
     }
     
-    func calcFP(Pressure: Double) -> Double{
+    func calcFP(Pressure: Double) -> Double
+    {
         let Pstd=29.53 //in-hg
         var FP : Double = 0
         FP = (Pressure - Pstd)/(Pstd)
         return FP
     }
     
-    func calcFT(Temperature: Double, Altitude: Double) -> Double{
+    func calcFT(Temperature: Double, Altitude: Double) -> Double
+    {
         let Tstd = -0.0036*Altitude+59
         let FT = (Temperature - Tstd)/(459.6+Tstd)
         return FT
@@ -230,7 +240,8 @@ struct BallisticsBrain {
     // given flight time in a vacuum, and given flight time in real life.
     // Returns the windage correction needed in inches.
     // Source is in "_windage.c"
-    func Windage(WindSpeed: Double, Vi: Double, xx: Double, t: Double) -> Double{
+    func Windage(WindSpeed: Double, Vi: Double, xx: Double, t: Double) -> Double
+    {
         let Vw = WindSpeed*17.60 //Convert to inches per second
         return (Vw*(t-xx/Vi))
     }
@@ -248,7 +259,9 @@ struct BallisticsBrain {
     // Functions to resolve any wind / angle combination into headwind and crosswind components.
     // Source is in "_windage.c"
     //Headwind is positive at windAngle=0
-    func HeadWind(WindSpeed: Double, WindAngle: Double) -> Double{
+    func HeadWind(WindSpeed: Double, WindAngle: Double) ->
+        Double
+    {
         let Wangle = DegtoRad(deg: WindAngle)
         return (cos(Wangle)*WindSpeed)
     }
@@ -266,7 +279,8 @@ struct BallisticsBrain {
      Returns the headwind or crosswind velocity component, in mi/hr.
      */
     // Positive is from Shooters Right to Left (Wind from 90 degree)
-    func CrossWind(WindSpeed: Double, WindAngle: Double) -> Double{
+    func CrossWind(WindSpeed: Double, WindAngle: Double) -> Double
+    {
         let Wangle = DegtoRad(deg: WindAngle)
         return (sin(Wangle)*WindSpeed)
     }
@@ -286,7 +300,8 @@ struct BallisticsBrain {
      Returns the angle of the bore relative to the sighting system, in degrees.
      */
     func ZeroAngle(DragFunction: Int, DragCoefficient: Double, Vi: Double,
-                   SightHeight: Double, ZeroRange: Double, yIntercept: Double) -> Double{
+                   SightHeight: Double, ZeroRange: Double, yIntercept: Double) -> Double
+    {
         
         // Numerical Integration variables
         var t : Double = 0
@@ -417,7 +432,7 @@ struct BallisticsBrain {
     // A function to generate a ballistic solution table in 1 yard increments, up to __BCOMP_MAXRANGE__.
     // Source is in "_solve.c
     //The Solve-All Solution
-    func SolveAll(DragFunction: Int, DragCoefficient: Double, Vi: Double, SightHeight: Double,
+    func SolveAll(DragFunction: Int, DragCoefficient: Double, Vi: Double, SightHeight: Double, projectileWeight: Int,
                   ShootingAngle: Double, ZAngle: Double, WindSpeed: Double, WindAngle: Double,
                   Start: Int, Stop: Int) -> [Double]{
         
@@ -504,7 +519,7 @@ struct BallisticsBrain {
                 break;
             }
         }
-        let weight = Double(GlobalSelectionModel.ammunitionWeight)
+        let weight = Double(projectileWeight)
         if(retArray != []){
             let velocity = Double(retArray[6])
         
@@ -526,6 +541,331 @@ struct BallisticsBrain {
             retArray.append(0)
         }
         return retArray;
+    }
+    
+    
+    // Helpers
+    //**************************************************************************
+    
+    
+    var zeroangle : Double = -1
+    var altitude : Double = 0 //measured in feet
+    var opposite : Double = 0
+    var barometer : Double = 29.53 //measured in Hg
+    var temperature : Double = 59 //measured in F
+    var relativeHumidity : Double = 78/100 //measured in %
+    var hypotenuse : Double = 0
+    var distinMeters : Double = 0
+    var distanceYds : Double = 0
+    var sightHeight : Double = 1.6
+    var projectileWeight : Int = 168
+    
+    var bc : Double = -1// The ballistic coefficient for the projectile.
+    var v : Double = -1// Intial velocity, in ft/s
+    var sh : Double = -1// The Sight height over bore, in inches.
+    var angle : Double = -1// The shooting angle (uphill / downhill), in degrees.
+    var zero : Double = -1// The zero range of the rifle, in yards.
+    var windspeed : Double = -1 // The wind speed in miles per hour.
+    var windangle : Double = -1// The wind angle (0=headwind, 90=right to left, 180=tailwind, 270/-90=left to right)
+    var df : Int = 0
+    var numRows : Int = 0
+    var bearing : Double = 0
+    var pressure : Double = 0
+    var humidity : Double = 0
+
+    var targetheight : Double = 0
+    var shooterheight : Double = 0
+    
+    var windOn = true
+    var environmentOn = true
+    var altitudeOn = true
+    
+    //====================================================================
+    func get_heading1(lat1: Double,lon1: Double,lat2: Double,lon2: Double)
+        -> Double
+    {
+            
+            //var diff_lat: Double = 0
+            var diff_long: Double = 0
+            var degree: Double = 0
+            
+            diff_long = DegtoRad(deg: (((lon2*1000000)-(lon1*1000000))/1000000))
+            
+            //diff_lat =  ballisticCalculation.DegtoRad((((lat2*1000000)-(lat1*1000000))/1000000))
+            
+            degree = RadtoDeg(rad: ((atan2(sin(diff_long)*cos( DegtoRad(deg: lat2)),cos( DegtoRad(deg: lat1))*sin( DegtoRad(deg: lat2))-sin( DegtoRad(deg: lat1))*cos( DegtoRad(deg: lat2))*cos(diff_long)))))
+            
+            if (degree >= 0)
+            {
+                return degree;
+            }
+            else
+            {
+                return 360+degree;
+            }
+    }
+    
+    //====================================================================
+    func setBallistics(shooter: CLLocationCoordinate2D, target: CLLocationCoordinate2D)
+    {
+                //self.bc = GlobalSelectionModel.ballisticCoefficient
+        
+//                if(GlobalSelectionModel.chronograph != 0)
+//                {
+//                    self.v = Double(GlobalSelectionModel.chronograph)
+//                }
+//                else
+//                {
+//                    self.v = Double(GlobalSelectionModel.muzzleVelocity)
+//                }
+                //self.sh = GlobalSelectionModel.sightHeight
+                //self.zero = Double(GlobalSelectionModel.zeroRange)
+        
+                //df is drag Function G1 - G8
+                
+                self.df = 4//GlobalSelectionModel.DragFunc
+                
+                
+                //Set the Windage Factors
+                if(windOn)
+                {
+                    var wAngle: Double = 0
+                    var angle: Double = 0
+                    //windspeed = Double(WeatherData.GlobalData.windspeed)!
+                    //wAngle = Double(WeatherData.GlobalData.direction)!
+                    
+                    
+                    let shotHeading = get_heading1(lat1: shooter.latitude, lon1: shooter.longitude, lat2: target.latitude, lon2: target.longitude)
+                    
+                    if(shotHeading > 180)
+                    {
+                        angle = 360 - shotHeading
+                        windangle = (wAngle - 180) + angle
+                    }
+                    else
+                    {
+                        angle = 180 - shotHeading
+                        windangle = (wAngle - 360) + angle
+                    }
+                    if(windangle < 0)
+                    {
+                        windangle = windangle + 360
+                    }
+                    
+                }
+                else
+                {//Use Standard Temperature Pressure
+                    windspeed = 0
+                    windangle = 0
+                }
+                
+                //Set the Environmental Factors
+                if(environmentOn)
+                {
+                    altitude = Double(WeatherData.GlobalData.altitude)! //measured in feet
+                    if(WeatherData.GlobalData.pressure != "NaN")
+                    {
+                        barometer = Double(WeatherData.GlobalData.pressure)! //measured in Hg
+                    }
+                    else
+                    {
+                        barometer = 29.53 //measured in Hg
+                    }
+                    if(WeatherData.GlobalData.temperatureF != "NaN")
+                    {
+                        temperature = Double(WeatherData.GlobalData.temperatureF)! //measured in F
+                    }
+                    else
+                    {
+                        temperature = 59 //measured in F
+                    }
+                    if(WeatherData.GlobalData.humidity != "NaN")
+                    {
+                        relativeHumidity = (Double(WeatherData.GlobalData.humidity)!/100) //measured in %
+                    }
+                    else
+                    {
+                        relativeHumidity = 78/100 //measured in %
+                    }
+                }
+                else
+                {
+                    altitude = 0 //measured in feet
+                    barometer = 29.53 //measured in Hg
+                    temperature = 59 //measured in F
+                    relativeHumidity = 78/100 //measured in %
+                }
+                
+                
+                bc = AtmCorrect(DragCoefficient: bc, Altitude: altitude,
+                                                Barometer: barometer,
+                                                Temperature: temperature,
+                                                RelativeHumidity: relativeHumidity)
+                
+                
+                // Find the zero angle of the bore relative to the sighting system.
+                zeroangle = ZeroAngle(DragFunction: df, DragCoefficient: bc,
+                                                      Vi: v, SightHeight: sh,
+                                                      ZeroRange: zero,
+                                                      yIntercept: 0)
+
+                if(distanceYds > 0 && bc != -1 && v != -1 && sh != -1)
+                {
+                    if(altitudeOn)
+                    {
+                        
+                        // shootingAngle.text = String(format: "%.0f", angle) + "\u{00B0}"
+                        
+                        GlobalSelectionModel.Results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
+                                                                                ShootingAngle: angle, ZAngle: zeroangle, WindSpeed: windspeed, WindAngle: windangle,
+                                                                                Start: Int(distanceYds), Stop: Int(distanceYds))
+                        
+                        //  MoA.text = String(format: "%.2lf \u{2195}", GlobalSelectionModel.Results[2])
+                        // WMoA.text = String(format: "%.2lf \u{2194}", GlobalSelectionModel.Results[5])
+                        
+                        
+                    }
+                    else
+                    {
+                        //shootingAngle.text = "0.0" + "\u{00B0}"
+                        
+                        // Generate a solution using the GNU Ballistics library call.
+                        GlobalSelectionModel.Results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
+                                                                                ShootingAngle: 0, ZAngle: zeroangle, WindSpeed: windspeed, WindAngle: windangle,
+                                                                                Start: Int(distanceYds), Stop: Int(distanceYds))
+                        
+                        //MoA.text = String(format: "%.2lf \u{2195}", GlobalSelectionModel.Results[2])
+                        //WMoA.text = String(format: "%.2lf \u{2194}", GlobalSelectionModel.Results[5])
+                    }
+
+                }
+    }
+    
+    func resetDistance()
+    {
+        if(GlobalSelectionModel.imperial)
+        {
+            distanceYds = (Double(distinMeters) * 1.09361)
+        }
+        else
+        {
+            distanceYds = (Double(distinMeters) * 1.09361)
+        }
+        if(altitudeOn)
+        {
+            angleset()
+        }
+    }
+    
+    func angleset()
+    {
+        if(altitudeOn)
+        {
+            if(targetheight > shooterheight){
+                opposite = (targetheight - shooterheight)
+                
+                hypotenuse = sqrt(pow((Double(distinMeters) * 1.09361),2) + pow(opposite,2))
+                
+                if(hypotenuse > (Double(distinMeters) * 1.09361))
+                {
+                    
+                    distanceYds = hypotenuse
+                    angle = asin(opposite/distanceYds)
+                    angle = RadtoDeg(rad: angle)
+                    if(GlobalSelectionModel.imperial)
+                    {
+                        // distance.text = String(format: "%.2lf ",(hypotenuse) + distanceOffset) + " yds^"
+                    }
+                    else
+                    {
+                        //distance.text = String(format: "%.2lf ",(hypotenuse * 0.9144) + distanceOffset) + " m^"
+                    }
+                }
+                else
+                {
+                    
+                    distanceYds = (Double(distinMeters) * 1.09361)
+                    angle = atan(opposite/distanceYds)
+                    angle = RadtoDeg(rad: angle)
+                    if(GlobalSelectionModel.imperial){
+                        //distance.text = String(format: "%.2lf ",(Double(distinMeters) * 1.09361) + distanceOffset) + " yds"
+                    }
+                    else
+                    {
+                        //distance.text = String(format: "%.2lf ",(Double(distinMeters)) + distanceOffset) + " m"
+                    }
+                }
+            }
+            else
+            {
+                opposite = (shooterheight - targetheight)
+                
+                hypotenuse = sqrt(pow((Double(distinMeters) * 1.09361),2) + pow(opposite,2))
+                
+                if(hypotenuse > (Double(distinMeters) * 1.09361))
+                {
+                    
+                    distanceYds = hypotenuse
+                    angle = -(asin(opposite/distanceYds))
+                    angle = RadtoDeg(rad: angle)
+                    if(GlobalSelectionModel.imperial)
+                    {
+                        //distance.text = String(format: "%.2lf ",(hypotenuse) + distanceOffset) + " yds^"
+                    }
+                    else
+                    {
+                        //distance.text = String(format: "%.2lf ",(hypotenuse * 0.9144) + distanceOffset) + " m^"
+                    }
+                }
+                else
+                {
+                    
+                    distanceYds = (Double(distinMeters) * 1.09361)
+                    angle = -(atan(opposite/distanceYds))
+                    angle = RadtoDeg(rad: angle)
+                    if(GlobalSelectionModel.imperial)
+                    {
+                        //distance.text = String(format: "%.2lf ",(Double(distinMeters) * 1.09361) + distanceOffset) + " yds"
+                    }
+                    else
+                    {
+                        //distance.text = String(format: "%.2lf ",(Double(distinMeters)) + distanceOffset) + " m"
+                    }
+                }
+            }
+        }
+    }
+    
+    func setValue(type: String, variable: String)
+    {
+        switch type
+        {
+        case "USER_BEARING":
+            self.bearing = Double(variable)!
+        case "TARGET_DISTANCE":
+            self.distanceYds = Double(variable)!
+            self.distinMeters = distanceYds / 1.09361
+        case "ZERO_RANGE":
+            self.zero = Double(variable)!
+        case "SIGHT_HEIGHT":
+            self.sh = Double(variable)!
+        case "BALLISTIC_COEFFICIENT":
+            self.bc = Double(variable)!
+        case "PROJECTILE_WEIGHT":
+            self.projectileWeight = Int(variable)!
+        case "MUZZLE_VELOCITY":
+            self.v = Double(variable)!
+        case "OUTSIDE_TEMPERATURE":
+            self.temperature = Double(variable)!
+        case "WIND_SPEED":
+            self.windspeed = Double(variable)!
+        case "WIND_DIRECTION":
+            self.windangle = Double(variable)!
+        case "ALTITUDE":
+            self.altitude = Double(variable)!
+        default:
+            break
+        }
     }
 }
 
