@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C6BC3CB2007AD2A00C062D7 /* MapBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6BC3CA2007AD2A00C062D7 /* MapBrain.swift */; };
+		6C2EE68C200A6BCD00FCFC73 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2EE68B200A6BCD00FCFC73 /* Alerts.swift */; };
+		6C6BC3CD20092D3700C062D7 /* TargetPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6BC3CC20092D3700C062D7 /* TargetPinView.swift */; };
 		6CCD5F3B1FFD5D85009018BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3A1FFD5D85009018BE /* AppDelegate.swift */; };
 		6CCD5F3D1FFD5D85009018BE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3C1FFD5D85009018BE /* ViewController.swift */; };
 		6CCD5F401FFD5D85009018BE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3E1FFD5D85009018BE /* Main.storyboard */; };
@@ -24,7 +25,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6C6BC3CA2007AD2A00C062D7 /* MapBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBrain.swift; sourceTree = "<group>"; };
+		6C2EE68B200A6BCD00FCFC73 /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
+		6C6BC3CC20092D3700C062D7 /* TargetPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetPinView.swift; sourceTree = "<group>"; };
 		6CCD5F371FFD5D85009018BE /* Ballistics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ballistics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CCD5F3A1FFD5D85009018BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6CCD5F3C1FFD5D85009018BE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,7 +62,6 @@
 				6CCD5F4F1FFD6705009018BE /* TargetPin.swift */,
 				6CF4807A1FFE812100BBEC58 /* WeatherData.swift */,
 				6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */,
-				6C6BC3CA2007AD2A00C062D7 /* MapBrain.swift */,
 				6CD4024820057134002E9E0E /* LocationTranslation.swift */,
 			);
 			path = Model;
@@ -90,6 +91,8 @@
 			children = (
 				6CCD5F3A1FFD5D85009018BE /* AppDelegate.swift */,
 				6CCD5F3C1FFD5D85009018BE /* ViewController.swift */,
+				6C2EE68B200A6BCD00FCFC73 /* Alerts.swift */,
+				6C6BC3CC20092D3700C062D7 /* TargetPinView.swift */,
 				6CCD5F3E1FFD5D85009018BE /* Main.storyboard */,
 				6CCD5F441FFD5D85009018BE /* Assets.xcassets */,
 				6CCD5F461FFD5D85009018BE /* LaunchScreen.storyboard */,
@@ -175,11 +178,12 @@
 			files = (
 				6CCD5F501FFD6705009018BE /* TargetPin.swift in Sources */,
 				6CF480771FFE803100BBEC58 /* BallisticsBrain.swift in Sources */,
-				6C6BC3CB2007AD2A00C062D7 /* MapBrain.swift in Sources */,
 				6CF4807B1FFE812100BBEC58 /* WeatherData.swift in Sources */,
 				6CCD5F3D1FFD5D85009018BE /* ViewController.swift in Sources */,
 				6CF480791FFE805200BBEC58 /* GlobalSelectionModel.swift in Sources */,
 				6CCD5F431FFD5D85009018BE /* Ballistics.xcdatamodeld in Sources */,
+				6C2EE68C200A6BCD00FCFC73 /* Alerts.swift in Sources */,
+				6C6BC3CD20092D3700C062D7 /* TargetPinView.swift in Sources */,
 				6CCD5F3B1FFD5D85009018BE /* AppDelegate.swift in Sources */,
 				6CD4024920057134002E9E0E /* LocationTranslation.swift in Sources */,
 			);

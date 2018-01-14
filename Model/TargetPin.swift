@@ -9,8 +9,30 @@
 import Foundation
 import MapKit
 
+
+
 class TargetPin: NSObject, MKAnnotation
 {
+    var markerTintColor: UIColor  {
+        switch discipline {
+        case "Monument":
+            return .red
+        case "Mural":
+            return .cyan
+        case "Target":
+            return .blue
+        case "Sculpture":
+            return .purple
+        default:
+            return .green
+        }
+    }
+    
+    var imageName: String? {
+        if discipline == "Sculpture" { return "Statue" }
+        return "Flag"
+    }
+    
     var timerWeather = Timer()
     var timerAltitude = Timer()
     let title: String?
@@ -134,7 +156,7 @@ class TargetPin: NSObject, MKAnnotation
                     return
                 }
 
-                self.initVarsWeather(json: weather as! [String: AnyObject])
+                self.initVarsWeather(json: weather as [String: AnyObject])
             }
             catch
             {
@@ -199,7 +221,7 @@ class TargetPin: NSObject, MKAnnotation
                     return
                 }
 
-                self.initVarsAltitude(json: (weather as! [String: AnyObject]))
+                self.initVarsAltitude(json: (weather as [String: AnyObject]))
             }
             catch
             {

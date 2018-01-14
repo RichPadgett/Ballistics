@@ -12,6 +12,9 @@ import Foundation
 
 class BallisticsBrain
 {
+    
+    
+    
 
     let GRAVITY = -(32.194)
     let _BCOMP_MAXRANGE_ = 50001
@@ -454,7 +457,7 @@ class BallisticsBrain
         var dvy : Double = 0
         var x : Double = 0
         var y : Double = 0
-        var moa : Double = 0
+        //var moa : Double = 0
         
         let headwind = HeadWind(WindSpeed: WindSpeed, WindAngle: WindAngle)
         let crosswind = CrossWind(WindSpeed: WindSpeed, WindAngle: WindAngle)
@@ -493,7 +496,7 @@ class BallisticsBrain
                 retArray.append(x/3)
                 retArray.append(y*12)
                 retArray.append(-RadtoMOA(rad: atan(y/x)))
-                moa = (-RadtoMOA(rad: atan(y/x)))
+                //moa = (-RadtoMOA(rad: atan(y/x)))
                 retArray.append(t+dt)
                 retArray.append(Windage(WindSpeed: crosswind,Vi: Vi,xx: x,t: t+dt))
                 retArray.append(RadtoMOA(rad: atan(((
@@ -547,6 +550,7 @@ class BallisticsBrain
     // Helpers
     //**************************************************************************
     
+    var results : [Double] = []
     
     var zeroangle : Double = -1
     var altitude : Double = 0 //measured in feet
@@ -557,7 +561,6 @@ class BallisticsBrain
     var hypotenuse : Double = 0
     var distinMeters : Double = 0
     var distanceYds : Double = 0
-    var sightHeight : Double = 1.6
     var projectileWeight : Int = 168
     
     var bc : Double = -1// The ballistic coefficient for the projectile.
@@ -629,7 +632,7 @@ class BallisticsBrain
                 //Set the Windage Factors
                 if(windOn)
                 {
-                    var wAngle: Double = 0
+                    let wAngle: Double = 0
                     var angle: Double = 0
                     //windspeed = Double(WeatherData.GlobalData.windspeed)!
                     //wAngle = Double(WeatherData.GlobalData.direction)!
@@ -716,7 +719,7 @@ class BallisticsBrain
                         
                         // shootingAngle.text = String(format: "%.0f", angle) + "\u{00B0}"
                         
-                        GlobalSelectionModel.Results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
+                        self.results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
                                                                                 ShootingAngle: angle, ZAngle: zeroangle, WindSpeed: windspeed, WindAngle: windangle,
                                                                                 Start: Int(distanceYds), Stop: Int(distanceYds))
                         
@@ -730,7 +733,7 @@ class BallisticsBrain
                         //shootingAngle.text = "0.0" + "\u{00B0}"
                         
                         // Generate a solution using the GNU Ballistics library call.
-                        GlobalSelectionModel.Results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
+                        self.results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
                                                                                 ShootingAngle: 0, ZAngle: zeroangle, WindSpeed: windspeed, WindAngle: windangle,
                                                                                 Start: Int(distanceYds), Stop: Int(distanceYds))
                         
@@ -761,6 +764,7 @@ class BallisticsBrain
     {
         if(altitudeOn)
         {
+            shooterheight = Double(WeatherData.GlobalData.altitude)!
             if(targetheight > shooterheight){
                 opposite = (targetheight - shooterheight)
                 
