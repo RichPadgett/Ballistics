@@ -15,12 +15,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // Variables
     // Timers
     private var sockTimer = Timer()
-    private var weatherTimer = Timer()
     private var textFieldTimer = Timer()
-    private var altitudeTimer = Timer()
     private var moaListener = Timer()
-    
+    private var weatherTimer = Timer()
+    private var altitudeTimer = Timer()
     private var locationManager = CLLocationManager()
+    
     private var heading = CLLocationDegrees()
     private var latDelta: CLLocationDegrees = 0.002
     private var lonDelta: CLLocationDegrees = 0.002
@@ -34,7 +34,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var menuIsVisible: Bool = false
     
     private var ballisticsBrain = BallisticsBrain()
-  
     func getBallisticsBrain() -> BallisticsBrain
     {
         return ballisticsBrain
@@ -77,39 +76,22 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // Constraint Outlets
     @IBOutlet weak var leadingC: NSLayoutConstraint!
     @IBOutlet weak var windSockTopC: NSLayoutConstraint!
-
     @IBOutlet weak var windSockRightC: NSLayoutConstraint!
-  
-    
+      
     // View Did Load
     // *************************************************************************
     override func viewDidLoad()
     {
         super.viewDidLoad()
-//
-//
-//        let appDeligate = UIApplication.shared.delegate as! AppDelegate
-//        let context = appDeligate.persistentContainer.viewContext
         
         //set map delegate
         mapView.delegate = self
-        
-        //Set initial location to Greenville SC
-        let initialLocation = CLLocation(latitude: 34.8526, longitude: -82.3940)
-        centerMapOnLocation(location: initialLocation)
-        
         mapView.register(TargetPin.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         // enable location services
-        enableLocationServices()
-        
-        // get weather timer
-        getWeatherForCoordinate()
-        weatherTimer = Timer.scheduledTimer(timeInterval: 15.0, target: self, selector: #selector(ViewController.getWeatherForCoordinate), userInfo: nil, repeats: true)
-        
-        // get altitude timer
-        getElevationForCoordinate()
-        altitudeTimer = Timer.scheduledTimer(timeInterval: 15.0, target: self, selector: #selector(ViewController.getElevationForCoordinate), userInfo: nil, repeats: true)
+        enableLocationServices(sender: self)
+        mapView.showsUserLocation = true;
+        centerMapOnLocation(location: locationManager.location!)
         
         textFieldTimer = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.sinkTextFieldVariables), userInfo: nil, repeats: true)
         
@@ -118,6 +100,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         sockTimer = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.setWindSock), userInfo: nil, repeats: true)
         
         moaListener = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.setMOAs), userInfo: nil, repeats: true)
+        
+        
+        // get weather timer
+        getWeatherForCoordinate()
+        weatherTimer = Timer.scheduledTimer(timeInterval: 15.0, target: self, selector: #selector(getWeatherForCoordinate), userInfo: nil, repeats: true)
+        
+        // get altitude timer
+        getElevationForCoordinate()
+        altitudeTimer = Timer.scheduledTimer(timeInterval: 15.0, target: self, selector: #selector(getElevationForCoordinate), userInfo: nil, repeats: true)
         
           initializeTextFields()
           initializeCoreData()
@@ -307,18 +298,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }) { (animationComplete) in }
     }
     
-    // Keyboard Open Features
-    @objc func keyboardDidShow(notification: NSNotification)
-    {
-        //Keyboard popped up
-    }
-    
-    // Keyboard hide Features
-    @objc func keyboardDidHide(notification: NSNotification)
-    {
-        //Keyboard closed
-    }
-    
     // Button Functions
     // *************************************************************************
     
@@ -396,6 +375,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     {
         self.lockBearing = !self.lockBearing
         bearingLockedAlert(self)
+        
+        if(self.lockBearing)
+        {
+            degreeLabel.textColor = UIColor.red
+        }
+        else
+        {
+            degreeLabel.textColor = UIColor.black
+        }
     }
     
     // Altitude Button Function
@@ -426,7 +414,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // drop target point and clear old targets
     @IBAction func barButtonAction(_ sender: UIBarButtonItem)
     {
-     
         if let title = sender.title
         {
             switch title
@@ -492,7 +479,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     //Control The degrees that the wind Sock Points
     @objc func setWindSock()
     {
-         self.degreeLabel.text = String(describing: Int(self.trueNorth))
+        self.degreeLabel.text = String(describing: Int(self.trueNorth))
         UIView.animate(withDuration: 0.5)
         {
             self.windSock.transform = CGAffineTransform(rotationAngle: CGFloat(((WeatherData.GlobalData.degrees -
@@ -536,7 +523,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
     // Center Map
     // *************************************************************************
-    let regionRadius: CLLocationDistance = 7
+    let regionRadius: CLLocationDistance = 25
     func centerMapOnLocation(location: CLLocation)
     {
         print("Entered Center Map on Location")
@@ -548,12 +535,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // *************************************************************************
     // Location Manager Code ***************************************************
     // *************************************************************************
+ 
+    
+    // Did Update Heading
+    // *************************************************************************
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading)
+    {
+        
+        heading = newHeading.trueHeading - newHeading.magneticHeading
+        if(!lockBearing)
+        {
+            self.mapView.camera.heading = newHeading.magneticHeading
+        }
+        centerMapOnLocation(location: locationManager.location!)
+    }
     
     // Manage Location Services
     // *************************************************************************
-    func enableLocationServices()
+    func enableLocationServices(sender: CLLocationManagerDelegate)
     {
-        locationManager.delegate = self
+        locationManager.delegate = sender
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
         switch CLLocationManager.authorizationStatus() {
@@ -563,7 +564,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             locationManager.requestWhenInUseAuthorization()
             locationManager.startUpdatingLocation()
             locationManager.startUpdatingHeading()
-            self.mapView.showsUserLocation = true;
             break
             
         case .restricted, .denied:
@@ -576,7 +576,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             // Enable basic location features
             locationManager.startUpdatingLocation()
             locationManager.startUpdatingHeading()
-            self.mapView.showsUserLocation = true;
             break
             
         case .authorizedAlways:
@@ -585,17 +584,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             locationManager.startUpdatingLocation()
             locationManager.startUpdatingHeading()
             locationManager.awakeFromNib()
-            self.mapView.showsUserLocation = true;
             break
         }
-    }
-    
-    // Did Update Heading
-    // *************************************************************************
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading)
-    {
-        heading = newHeading.trueHeading - newHeading.magneticHeading
-        self.mapView.camera.heading = newHeading.magneticHeading
     }
     
     // Draw shot line on Map
@@ -629,8 +619,118 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // *************************************************************************
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
+        centerMapOnLocation(location: locationManager.location!)
         // draw polyline from shooter to target
         drawShotLine(location: locations[0])
+    }
+    
+    // Render OverLays
+    // *************************************************************************
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer
+    {
+        if let polyline = overlay as? MKGeodesicPolyline
+        {
+            let testlineRenderer = MKPolylineRenderer(polyline: polyline)
+            testlineRenderer.strokeColor = UIColor.black
+            let lineDashPatterns: [NSNumber]?  = [2, 4, 2]
+            testlineRenderer.lineDashPattern = lineDashPatterns
+            testlineRenderer.lineDashPhase = CGFloat(0.87)
+            testlineRenderer.lineWidth = 1.0
+            return testlineRenderer
+        }
+        fatalError("Something wrong with renderer...")
+    }
+    
+    // Popup Bubble View Annotations
+    // *************************************************************************
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+
+        guard let annotation = annotation as? TargetPin else { return nil }
+
+        let identifier = "marker"
+        var view: MKMarkerAnnotationView
+
+        if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            as? MKMarkerAnnotationView
+        {
+            dequeuedView.annotation = annotation
+            view = dequeuedView
+        }
+        else
+        {
+            view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            view.canShowCallout = true
+            view.calloutOffset = CGPoint(x: -5, y: 5)
+            view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+        }
+        return view
+    }
+    
+    // Info button on Target Popup
+    // *************************************************************************
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView,
+                 calloutAccessoryControlTapped control: UIControl)
+    {
+        alertBallistics(self)
+    }
+    
+    
+    // URLRequest Get Weather Weather API
+    // *************************************************************************
+    @objc func getWeatherForCoordinate()
+    {
+        guard let coordinate = locationManager.location?.coordinate
+            else
+        {
+            return
+        }
+        WeatherData.GlobalData.setUrl(userLat: String(describing: coordinate.latitude),userLon: String(describing: coordinate.longitude))
+        
+        let urlRequest = URLRequest(url: WeatherData.GlobalData.url!)
+        
+        // set up the session
+        let config = URLSessionConfiguration.default
+        let session = URLSession(configuration: config)
+        
+        // make the request
+        let task = session.dataTask(with: urlRequest)
+        {
+            (data, response, error) in
+            // check for any errors
+            guard error == nil
+                else
+            {
+                print("error calling GET on " + String(describing: urlRequest))
+                print(error!)
+                return
+            }
+            // make sure we got data
+            guard let responseData = data
+                else
+            {
+                print("Error: did not receive weather data")
+                return
+            }
+            // parse the result as JSON, since that's what the API provides
+            do
+            {
+                guard let weather = try JSONSerialization.jsonObject(with: responseData, options: JSONSerialization.ReadingOptions.mutableContainers)
+                    as? [String: Any]
+                    else
+                {
+                    print("error trying to convert weather data to JSON")
+                    return
+                }
+                WeatherData.GlobalData.initVars(json: weather as [String: AnyObject])
+            }
+            catch
+            {
+                print("error trying to convert data to JSON")
+                WeatherData.GlobalData.initInvalid()
+                return
+            }
+        }
+        task.resume()
     }
     
     // URLRequest Get Elevation Google
@@ -690,159 +790,4 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }
         task.resume()
     }
-    
-    // URLRequest Get Weather Weather API
-    // *************************************************************************
-    @objc func getWeatherForCoordinate()
-    {
-        guard let coordinate = locationManager.location?.coordinate
-        else
-        {
-            return
-        }
-        WeatherData.GlobalData.setUrl(userLat: String(describing: coordinate.latitude),userLon: String(describing: coordinate.longitude))
-        
-        let urlRequest = URLRequest(url: WeatherData.GlobalData.url!)
-        
-        // set up the session
-        let config = URLSessionConfiguration.default
-        let session = URLSession(configuration: config)
-        
-        // make the request
-        let task = session.dataTask(with: urlRequest)
-        {
-            (data, response, error) in
-            // check for any errors
-            guard error == nil
-            else
-            {
-                print("error calling GET on " + String(describing: urlRequest))
-                print(error!)
-                return
-            }
-            // make sure we got data
-            guard let responseData = data
-            else
-            {
-                print("Error: did not receive weather data")
-                return
-            }
-            // parse the result as JSON, since that's what the API provides
-            do
-            {
-                guard let weather = try JSONSerialization.jsonObject(with: responseData, options: JSONSerialization.ReadingOptions.mutableContainers)
-                    as? [String: Any]
-                else
-                {
-                        print("error trying to convert weather data to JSON")
-                        return
-                }
-                WeatherData.GlobalData.initVars(json: weather as [String: AnyObject])
-            }
-            catch
-            {
-                print("error trying to convert data to JSON")
-                WeatherData.GlobalData.initInvalid()
-                return
-            }
-        }
-        task.resume()
-    }
-    
-    // *************************************************************************
-    // Map View Code  **********************************************************
-    // *************************************************************************
-    
-    
-    // Did Select Annotation
-    // *************************************************************************
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
-    {
-        let selectedAnnotation = view.annotation
-        
-        setWindSock()
-        
-        if(selectedAnnotation != nil && ballisticsBrain.distanceYds > 0)
-        {
-            target = CLLocationCoordinate2D(latitude: (selectedAnnotation?.coordinate.latitude)!, longitude: (selectedAnnotation?.coordinate.longitude)!)
-                
-            //Update the Initial Pin Selection
-            if(target != nil && shooter != nil)
-            {
-                mapView.remove(flightpathPolyline)
-                
-                let coordinate: [CLLocationCoordinate2D] = [shooter, target]
-                
-                flightpathPolyline = MKGeodesicPolyline(coordinates: coordinate, count: 2)
-                
-                print("polyline: (" +  String(flightpathPolyline.coordinate.latitude) + ", " + String(flightpathPolyline.coordinate
-                .longitude))
-                
-                mapView.add(flightpathPolyline, level: MKOverlayLevel.aboveLabels)
-                
-                let loc1 = CLLocation(latitude: shooter.latitude , longitude: shooter.longitude)
-                let loc2 = CLLocation(latitude: target.latitude, longitude: target.longitude)
-                
-                let t : TargetPin = selectedAnnotation as! TargetPin
-                
-                ballisticsBrain.targetheight = t.altitudeFtDouble
-                
-                ballisticsBrain.distinMeters = loc1.distance(from: loc2)
-                ballisticsBrain.distanceYds = (Double(ballisticsBrain.distinMeters) * 1.09361)
-                ballisticsBrain.angleset()
-                ballisticsBrain.setBallistics(shooter: shooter, target: target)
-               // alertBallistics(self)
-            }
-        }
-    }
-    
-    // Render OverLays
-    // *************************************************************************
-    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer
-    {
-        if let polyline = overlay as? MKGeodesicPolyline
-        {
-            let testlineRenderer = MKPolylineRenderer(polyline: polyline)
-            testlineRenderer.strokeColor = UIColor.black
-            let lineDashPatterns: [NSNumber]?  = [2, 4, 2]
-            testlineRenderer.lineDashPattern = lineDashPatterns
-            testlineRenderer.lineDashPhase = CGFloat(0.87)
-            testlineRenderer.lineWidth = 1.0
-            return testlineRenderer
-        }
-        fatalError("Something wrong with renderer...")
-    }
-    
-    // Popup Bubble View Annotations
-    // *************************************************************************
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-
-        guard let annotation = annotation as? TargetPin else { return nil }
-
-        let identifier = "marker"
-        var view: MKMarkerAnnotationView
-
-        if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-            as? MKMarkerAnnotationView
-        {
-            dequeuedView.annotation = annotation
-            view = dequeuedView
-        }
-        else
-        {
-            view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            view.canShowCallout = true
-            view.calloutOffset = CGPoint(x: -5, y: 5)
-            view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-        }
-        return view
-    }
-    
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView,
-                 calloutAccessoryControlTapped control: UIControl)
-    {
-        alertBallistics(self)
-    }
-    
-   
 }
