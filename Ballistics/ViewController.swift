@@ -86,6 +86,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad()
     {
         super.viewDidLoad()
+//
+//
+//        let appDeligate = UIApplication.shared.delegate as! AppDelegate
+//        let context = appDeligate.persistentContainer.viewContext
         
         //set map delegate
         mapView.delegate = self
@@ -116,13 +120,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         moaListener = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.setMOAs), userInfo: nil, repeats: true)
         
           initializeTextFields()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardDidHide(notification:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+          initializeCoreData()
         
         navigationCenterItem.title = " ∆ "
 
+    }
+    
+    func initializeCoreData()
+    {
+        targetDistanceTextField.text = String(ballisticsBrain.distanceYds)
+        ballisticCoefficientTextField.text = String(ballisticsBrain.bc)
+        zeroRangeTextField.text = String(ballisticsBrain.zero)
+        sightHeightTextField.text = String(ballisticsBrain.sh)
+        weightTextField.text = String(ballisticsBrain.projectileWeight)
+        muzzleVelocityTextField.text = String(ballisticsBrain.v)
     }
     
     func setKeyboardStyle(textField: UITextField)
@@ -217,10 +228,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         self.view.endEditing(true)
-       // if(menuIsVisible)
-        //{
-         //   operateMenuButton()
-       // }
+        if(menuIsVisible)
+        {
+            operateMenuButton()
+        }
         
     }
 
@@ -240,35 +251,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
           
             break
         case zeroRangeTextField:
-            stackViewTopC.constant = 0
+            stackViewTopC.constant = -0
       
             break
         case sightHeightTextField:
-            stackViewTopC.constant = 0
+            stackViewTopC.constant = -0
            
             break
         case ballisticCoefficientTextField:
-            stackViewTopC.constant = 0
+            stackViewTopC.constant = -80
            
             break
         case weightTextField:
-            stackViewTopC.constant = 0
+            stackViewTopC.constant = -100
       
             break
         case muzzleVelocityTextField:
-            stackViewTopC.constant = 0
+            stackViewTopC.constant = -120
       
             break
         case temperatureTextField:
-            stackViewTopC.constant = -200
+            stackViewTopC.constant = -140
           
             break
         case pressureTextField:
-            stackViewTopC.constant = -200
+            stackViewTopC.constant = -160
            
             break
         case humidityTextField:
-            stackViewTopC.constant = -200
+            stackViewTopC.constant = -180
          
             break
         case windSpeedTextField:
@@ -276,11 +287,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
   
             break
         case windDirectionTextField:
-            stackViewTopC.constant = -200
+            stackViewTopC.constant = -220
           
             break
         case altitudeTextField:
-            stackViewTopC.constant = -200
+            stackViewTopC.constant = -240
   
             break
         default:
@@ -330,6 +341,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             
             stackViewTopC.constant = 0
             stackViewTopC.constant = 0
+            self.view.endEditing(true)
+         
+            ballisticsBrain.saveCoreData()
         }
         
         UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations:
@@ -769,11 +783,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 let loc1 = CLLocation(latitude: shooter.latitude , longitude: shooter.longitude)
                 let loc2 = CLLocation(latitude: target.latitude, longitude: target.longitude)
                 
+                let t : TargetPin = selectedAnnotation as! TargetPin
+                
+                ballisticsBrain.targetheight = t.altitudeFtDouble
+                
                 ballisticsBrain.distinMeters = loc1.distance(from: loc2)
                 ballisticsBrain.distanceYds = (Double(ballisticsBrain.distinMeters) * 1.09361)
                 ballisticsBrain.angleset()
                 ballisticsBrain.setBallistics(shooter: shooter, target: target)
-                alertBallistics(self)
+               // alertBallistics(self)
             }
         }
     }

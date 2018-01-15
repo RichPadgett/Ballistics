@@ -9,13 +9,81 @@
 
 import MapKit
 import Foundation
+import CoreData
 
 class BallisticsBrain
 {
     
+    var appDeligate : AppDelegate
+    var context : NSManagedObjectContext
+    var ballisticsEntityDescription : NSEntityDescription?
+    var ballisticsEntity : NSManagedObject
     
-    
+    init()
+    {
+        appDeligate = UIApplication.shared.delegate as! AppDelegate
+        context = appDeligate.persistentContainer.viewContext
+        
+        ballisticsEntityDescription = NSEntityDescription.entity(forEntityName: "BallisticSettings", in: context)
+        ballisticsEntity = NSManagedObject(entity: ballisticsEntityDescription!, insertInto: context)
+        
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "BallisticSettings")
+ 
+        request.returnsObjectsAsFaults = false
+        
+        getCoreData(request: request)
+    }
 
+    func getCoreData(request: NSFetchRequest<NSFetchRequestResult>)
+    {
+        var list : [NSManagedObject] = []
+        do
+        {
+            let result = try context.fetch(request)
+            for data in result as! [NSManagedObject]
+            {
+                list.append(data)
+            }
+        }
+        catch
+        {
+            print("Failed")
+        }
+        
+        if(list.count > 1)
+        {
+            let sorted = list.sorted { (first, second) -> Bool in
+                if first.value(forKey: "date") as! Double > second.value(forKey: "date") as! Double
+                {
+                    return true
+                }
+                return false
+            }
+            
+            print("Sorted: " + String(describing: sorted))
+            
+            let subarray = sorted[1 ... sorted.count - 1]
+            for item in subarray
+            {
+                context.delete(item)
+                appDeligate.saveContext()
+            }
+            ballisticsEntity = sorted[0]
+            appDeligate.saveContext()
+            self.distanceYds = ballisticsEntity.value(forKey: "distanceYds") as! Double
+            self.distinMeters = distanceYds / 1.09361
+            self.bc = ballisticsEntity.value(forKey: "ballisticCoefficient") as! Double
+            self.v = ballisticsEntity.value(forKey: "muzzleVelocity") as! Double
+            self.sh = ballisticsEntity.value(forKey: "sightHeight") as! Double
+            self.projectileWeight = Int(ballisticsEntity.value(forKey: "weight") as! Double)
+            self.zero = ballisticsEntity.value(forKey: "zeroRange") as! Double
+        }
+        else if(list.count != 0)
+        {
+            ballisticsEntity = list[0]
+        }
+    }
+    
     let GRAVITY = -(32.194)
     let _BCOMP_MAXRANGE_ = 50001
     
@@ -840,6 +908,21 @@ class BallisticsBrain
         }
     }
     
+    func saveCoreData()
+    {
+        let timestamp = NSDate().timeIntervalSince1970
+        ballisticsEntity.setValue(timestamp, forKey: "date")
+        do
+        {
+        try context.save()
+            print("entity saved" + String(describing: ballisticsEntity))
+        }
+        catch
+        {
+        print("Failed saving")
+        }
+    }
+    
     func setValue(type: String, variable: String)
     {
         switch type
@@ -849,16 +932,22 @@ class BallisticsBrain
         case "TARGET_DISTANCE":
             self.distanceYds = Double(variable)!
             self.distinMeters = distanceYds / 1.09361
+            ballisticsEntity.setValue(self.distanceYds, forKey: "distanceYds")
         case "ZERO_RANGE":
             self.zero = Double(variable)!
+            ballisticsEntity.setValue(self.zero, forKey: "zeroRange")
         case "SIGHT_HEIGHT":
             self.sh = Double(variable)!
+            ballisticsEntity.setValue(self.sh, forKey: "sightHeight")
         case "BALLISTIC_COEFFICIENT":
             self.bc = Double(variable)!
+            ballisticsEntity.setValue(self.bc, forKey: "ballisticCoefficient")
         case "PROJECTILE_WEIGHT":
             self.projectileWeight = Int(variable)!
+            ballisticsEntity.setValue(self.projectileWeight, forKey: "weight")
         case "MUZZLE_VELOCITY":
             self.v = Double(variable)!
+            ballisticsEntity.setValue(self.v, forKey: "muzzleVelocity")
         case "OUTSIDE_TEMPERATURE":
             self.temperature = Double(variable)!
         case "WIND_SPEED":
@@ -870,6 +959,8 @@ class BallisticsBrain
         default:
             break
         }
+        
+        saveCoreData()
     }
 }
 

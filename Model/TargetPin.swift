@@ -55,6 +55,10 @@ class TargetPin: NSObject, MKAnnotation
     var barometricPressureInHgString: String
     var barometricPressureInHgDouble: Double
     
+    func getAltitudeFtDouble() -> Double{
+        return altitudeFtDouble
+    }
+    
     init(title: String, locationName: String, discipline: String,
          coordinate: CLLocationCoordinate2D)
     {
