@@ -1,5 +1,5 @@
 //
-//  BallisticsBrain.swift
+//  BallisticCalculator.swift
 //  DropZero-P3
 //
 //  Created by Richard Padgett on 10/12/16.
@@ -11,78 +11,9 @@ import MapKit
 import Foundation
 import CoreData
 
-class BallisticsBrain
+class BallisticCalculator
 {
-    
-    var appDeligate : AppDelegate
-    var context : NSManagedObjectContext
-    var ballisticsEntityDescription : NSEntityDescription?
-    var ballisticsEntity : NSManagedObject
-    
-    init()
-    {
-        appDeligate = UIApplication.shared.delegate as! AppDelegate
-        context = appDeligate.persistentContainer.viewContext
-        
-        ballisticsEntityDescription = NSEntityDescription.entity(forEntityName: "BallisticSettings", in: context)
-        ballisticsEntity = NSManagedObject(entity: ballisticsEntityDescription!, insertInto: context)
-        
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "BallisticSettings")
- 
-        request.returnsObjectsAsFaults = false
-        
-        getCoreData(request: request)
-    }
-
-    func getCoreData(request: NSFetchRequest<NSFetchRequestResult>)
-    {
-        var list : [NSManagedObject] = []
-        do
-        {
-            let result = try context.fetch(request)
-            for data in result as! [NSManagedObject]
-            {
-                list.append(data)
-            }
-        }
-        catch
-        {
-            print("Failed")
-        }
-        
-        if(list.count > 1)
-        {
-            let sorted = list.sorted { (first, second) -> Bool in
-                if first.value(forKey: "date") as! Double > second.value(forKey: "date") as! Double
-                {
-                    return true
-                }
-                return false
-            }
-            
-            print("Sorted: " + String(describing: sorted))
-            
-            let subarray = sorted[1 ... sorted.count - 1]
-            for item in subarray
-            {
-                context.delete(item)
-                appDeligate.saveContext()
-            }
-            ballisticsEntity = sorted[0]
-            appDeligate.saveContext()
-            self.distanceYds = ballisticsEntity.value(forKey: "distanceYds") as! Double
-            self.distinMeters = distanceYds / 1.09361
-            self.bc = ballisticsEntity.value(forKey: "ballisticCoefficient") as! Double
-            self.v = ballisticsEntity.value(forKey: "muzzleVelocity") as! Double
-            self.sh = ballisticsEntity.value(forKey: "sightHeight") as! Double
-            self.projectileWeight = Int(ballisticsEntity.value(forKey: "weight") as! Double)
-            self.zero = ballisticsEntity.value(forKey: "zeroRange") as! Double
-        }
-        else if(list.count != 0)
-        {
-            ballisticsEntity = list[0]
-        }
-    }
+    static let shared = BallisticCalculator()
     
     let GRAVITY = -(32.194)
     let _BCOMP_MAXRANGE_ = 50001
@@ -700,10 +631,10 @@ class BallisticsBrain
                 //Set the Windage Factors
                 if(windOn)
                 {
-                    let wAngle: Double = 0
+                    var wAngle: Double = 0
                     var angle: Double = 0
-                    //windspeed = Double(WeatherData.GlobalData.windspeed)!
-                    //wAngle = Double(WeatherData.GlobalData.direction)!
+                    windspeed = Double(WeatherData.GlobalData.windspeed)!
+                    wAngle = Double(WeatherData.GlobalData.direction)!
                     
                     
                     let shotHeading = get_heading1(lat1: shooter.latitude, lon1: shooter.longitude, lat2: target.latitude, lon2: target.longitude)

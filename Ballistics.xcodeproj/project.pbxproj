@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C06D63B20128ECD00D659CB /* BallisticData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C06D63A20128ECD00D659CB /* BallisticData.swift */; };
 		6C2EE68C200A6BCD00FCFC73 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2EE68B200A6BCD00FCFC73 /* Alerts.swift */; };
 		6C6BC3CD20092D3700C062D7 /* TargetPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6BC3CC20092D3700C062D7 /* TargetPinView.swift */; };
 		6CCD5F3B1FFD5D85009018BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD5F3A1FFD5D85009018BE /* AppDelegate.swift */; };
@@ -19,12 +20,13 @@
 		6CD4024920057134002E9E0E /* LocationTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CD4024820057134002E9E0E /* LocationTranslation.swift */; };
 		6CF480731FFE7D3000BBEC58 /* sock 100x100.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CF480721FFE7D3000BBEC58 /* sock 100x100.png */; };
 		6CF480751FFE7D4800BBEC58 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CF480741FFE7D4700BBEC58 /* compass.png */; };
-		6CF480771FFE803100BBEC58 /* BallisticsBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */; };
+		6CF480771FFE803100BBEC58 /* BallisticCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF480761FFE803000BBEC58 /* BallisticCalculator.swift */; };
 		6CF480791FFE805200BBEC58 /* GlobalSelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF480781FFE805200BBEC58 /* GlobalSelectionModel.swift */; };
 		6CF4807B1FFE812100BBEC58 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF4807A1FFE812100BBEC58 /* WeatherData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6C06D63A20128ECD00D659CB /* BallisticData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallisticData.swift; sourceTree = "<group>"; };
 		6C2EE68B200A6BCD00FCFC73 /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		6C6BC3CC20092D3700C062D7 /* TargetPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetPinView.swift; sourceTree = "<group>"; };
 		6CCD5F371FFD5D85009018BE /* Ballistics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ballistics.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,7 +41,7 @@
 		6CD4024820057134002E9E0E /* LocationTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTranslation.swift; sourceTree = "<group>"; };
 		6CF480721FFE7D3000BBEC58 /* sock 100x100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sock 100x100.png"; sourceTree = "<group>"; };
 		6CF480741FFE7D4700BBEC58 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
-		6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallisticsBrain.swift; sourceTree = "<group>"; };
+		6CF480761FFE803000BBEC58 /* BallisticCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallisticCalculator.swift; sourceTree = "<group>"; };
 		6CF480781FFE805200BBEC58 /* GlobalSelectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalSelectionModel.swift; sourceTree = "<group>"; };
 		6CF4807A1FFE812100BBEC58 /* WeatherData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,7 +63,8 @@
 				6CF480781FFE805200BBEC58 /* GlobalSelectionModel.swift */,
 				6CCD5F4F1FFD6705009018BE /* TargetPin.swift */,
 				6CF4807A1FFE812100BBEC58 /* WeatherData.swift */,
-				6CF480761FFE803000BBEC58 /* BallisticsBrain.swift */,
+				6CF480761FFE803000BBEC58 /* BallisticCalculator.swift */,
+				6C06D63A20128ECD00D659CB /* BallisticData.swift */,
 				6CD4024820057134002E9E0E /* LocationTranslation.swift */,
 			);
 			path = Model;
@@ -176,8 +179,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C06D63B20128ECD00D659CB /* BallisticData.swift in Sources */,
 				6CCD5F501FFD6705009018BE /* TargetPin.swift in Sources */,
-				6CF480771FFE803100BBEC58 /* BallisticsBrain.swift in Sources */,
+				6CF480771FFE803100BBEC58 /* BallisticCalculator.swift in Sources */,
 				6CF4807B1FFE812100BBEC58 /* WeatherData.swift in Sources */,
 				6CCD5F3D1FFD5D85009018BE /* ViewController.swift in Sources */,
 				6CF480791FFE805200BBEC58 /* GlobalSelectionModel.swift in Sources */,
@@ -325,6 +329,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X5Y46XG4T8;
 				INFOPLIST_FILE = Ballistics/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.richard.padgett.developer.Ballistics;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -340,6 +345,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X5Y46XG4T8;
 				INFOPLIST_FILE = Ballistics/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.richard.padgett.developer.Ballistics;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -118,25 +118,28 @@ func microphoneAlert(_ sender: ViewController)
 func alertBallistics(_ sender: ViewController)
 {
     var message : String
-    if(sender.getBallisticsBrain().results[0] == 0)
+    if(!sender.getBallisticsBrain().results.isEmpty)
     {
-        message = "Target is out of range"
-    }
-    else
-    {
-        message = String(sender.getBallisticsBrain().bc) + " BC\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[0]) + " Range (Yds)\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[1]) + " Drop  (in)\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[2]) + " Drop  (MoA)\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[6]) + " Velocity  (ft/s)\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[4]) + " Wind  (in)\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[5]) + " Wind  (MoA)\n"
-            +   String(format: "%d",(Int(sender.getBallisticsBrain().results[9]))) + " Energy  (ft-lb)\n"
-            +   String(format: "%.2lf", sender.getBallisticsBrain().results[3]) + " Time  (s)\n"
-    }
-    let alert = UIAlertController(title: "Ballistics", message: message, preferredStyle: .alert)
+        if(sender.getBallisticsBrain().results[0] == 0)
+        {
+            message = "Target is out of range"
+        }
+        else
+        {
+            message = String(sender.getBallisticsBrain().bc) + " BC\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[0]) + " Range (Yds)\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[1]) + " Drop  (in)\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[2]) + " Drop  (MoA)\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[6]) + " Velocity  (ft/s)\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[4]) + " Wind  (in)\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[5]) + " Wind  (MoA)\n"
+                +   String(format: "%d",(Int(sender.getBallisticsBrain().results[9]))) + " Energy  (ft-lb)\n"
+                +   String(format: "%.2lf", sender.getBallisticsBrain().results[3]) + " Time  (s)\n"
+        }
+        let alert = UIAlertController(title: "Ballistics", message: message, preferredStyle: .alert)
     
-    alert.addAction(UIAlertAction(title: "Got It", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Got It", style: .default, handler: nil))
     
-    sender.present(alert, animated: true)
+        sender.present(alert, animated: true)
+    }
 }

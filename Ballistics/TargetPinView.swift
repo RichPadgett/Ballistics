@@ -9,20 +9,6 @@
 import Foundation
 import MapKit
 
-class TargetPinMarkerView: MKMarkerAnnotationView {
-    override var annotation: MKAnnotation? {
-        willSet {
-            // 1
-            guard let artwork = newValue as? TargetPin else { return }
-            canShowCallout = true
-            calloutOffset = CGPoint(x: -5, y: 5)
-            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-            // 2
-            markerTintColor = artwork.markerTintColor
-            glyphText = String(artwork.discipline.first!)
-        }
-    }
-}
 
 class TargetPinView: MKAnnotationView {
     override var annotation: MKAnnotation? {

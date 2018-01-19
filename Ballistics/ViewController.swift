@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import Speech
 
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate  {
     
@@ -54,7 +55,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var environmentButton: UIBarButtonItem!
     
     // TextField Outlets
-    @IBOutlet weak var targetBearingTextField: UITextField!
+    @IBOutlet weak var targetBearingTextField: UITextField!{
+        didSet{
+            
+        }
+    }
     @IBOutlet weak var targetDistanceTextField: UITextField!
     @IBOutlet weak var zeroRangeTextField: UITextField!
     @IBOutlet weak var sightHeightTextField: UITextField!
@@ -86,14 +91,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         //set map delegate
         mapView.delegate = self
-        mapView.register(TargetPin.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        //mapView.register(TargetPin.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         // enable location services
         enableLocationServices(sender: self)
         mapView.showsUserLocation = true;
         centerMapOnLocation(location: locationManager.location!)
         
-        textFieldTimer = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.sinkTextFieldVariables), userInfo: nil, repeats: true)
+        //textFieldTimer = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.sinkTextFieldVariables), userInfo: nil, repeats: true)
         
         // Set wind Sock interval
         setWindSock()
@@ -398,6 +403,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     {
         self.microphoneOn = !microphoneOn
         microphoneAlert(self)
+        
+        if(microphoneOn)
+        {
+          //speech
+        }
     }
     
     // Button Functions Control
@@ -520,6 +530,44 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             //Pin Drop Skipped for 5 seconds
         }
     }
+    
+    // Did Select Annotation
+    // *************************************************************************
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
+    {
+        let selectedAnnotation = view.annotation
+        
+        setWindSock()
+        
+        if(selectedAnnotation != nil && ballisticsBrain.distanceYds > 0)
+        {
+            target = CLLocationCoordinate2D(latitude: (selectedAnnotation?.coordinate.latitude)!, longitude: (selectedAnnotation?.coordinate.longitude)!)
+            
+            //Update the Initial Pin Selection
+            if(target != nil && shooter != nil)
+            {
+                mapView.remove(flightpathPolyline)
+                
+                let coordinate: [CLLocationCoordinate2D] = [shooter, target]
+                
+                flightpathPolyline = MKGeodesicPolyline(coordinates: coordinate, count: 2)
+                
+                print("polyline: (" +  String(flightpathPolyline.coordinate.latitude) + ", " + String(flightpathPolyline.coordinate
+                    .longitude))
+                
+                mapView.add(flightpathPolyline, level: MKOverlayLevel.aboveLabels)
+                
+                let loc1 = CLLocation(latitude: shooter.latitude , longitude: shooter.longitude)
+                let loc2 = CLLocation(latitude: target.latitude, longitude: target.longitude)
+                
+                ballisticsBrain.distinMeters = loc1.distance(from: loc2)
+                ballisticsBrain.distanceYds = (Double(ballisticsBrain.distinMeters) * 1.09361)
+                ballisticsBrain.angleset()
+                ballisticsBrain.setBallistics(shooter: shooter, target: target)
+               // alertBallistics(self)
+            }
+        }
+    }
 
     // Center Map
     // *************************************************************************
@@ -535,19 +583,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // *************************************************************************
     // Location Manager Code ***************************************************
     // *************************************************************************
- 
-    
+
     // Did Update Heading
     // *************************************************************************
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading)
     {
-        
         heading = newHeading.trueHeading - newHeading.magneticHeading
         if(!lockBearing)
         {
             self.mapView.camera.heading = newHeading.magneticHeading
         }
-        centerMapOnLocation(location: locationManager.location!)
+        //centerMapOnLocation(location: locationManager.location!)
     }
     
     // Manage Location Services
@@ -619,7 +665,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // *************************************************************************
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
-        centerMapOnLocation(location: locationManager.location!)
+       // centerMapOnLocation(location: locationManager.location!)
         // draw polyline from shooter to target
         drawShotLine(location: locations[0])
     }
@@ -648,17 +694,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         guard let annotation = annotation as? TargetPin else { return nil }
 
         let identifier = "marker"
-        var view: MKMarkerAnnotationView
+        var view: MKAnnotationView
 
         if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-            as? MKMarkerAnnotationView
+            as? MKAnnotationView
         {
             dequeuedView.annotation = annotation
             view = dequeuedView
         }
         else
         {
-            view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             view.canShowCallout = true
             view.calloutOffset = CGPoint(x: -5, y: 5)
             view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
