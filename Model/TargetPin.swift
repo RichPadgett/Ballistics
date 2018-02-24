@@ -33,31 +33,17 @@ class TargetPin: NSObject, MKAnnotation
         return "Flag"
     }
     
-    var timerWeather = Timer()
-    var timerAltitude = Timer()
     let title: String?
     let locationName: String
     let discipline: String
     let coordinate: CLLocationCoordinate2D
 
-    var temperatureFarenheightString: String
-    var temperatureFarenheightDouble: Double
-    var temperatureCelciusString: String
-    var temperatureCelciusDouble: Double
-    var relativeHumidityPercentString: String
-    var relativeHumidityPercentDouble: Double
-    var altitudeFtString: String
-    var altitudeFtDouble: Double
-    var windVelocityMiHrString: String
-    var windVelocityMiHrDouble: Double
-    var windAngleDegString: String
-    var windAngleDegDouble: Double
-    var barometricPressureInHgString: String
-    var barometricPressureInHgDouble: Double
-    
-    func getAltitudeFtDouble() -> Double{
-        return altitudeFtDouble
-    }
+    var temperatureFarenheit: Double
+    var relativeHumidityPercent: Double
+    var altitudeFt: Double
+    var windVelocityMiHr: Double
+    var windAngleDeg: Double
+    var barometricPressureInHg: Double
     
     init(title: String, locationName: String, discipline: String,
          coordinate: CLLocationCoordinate2D)
@@ -68,36 +54,26 @@ class TargetPin: NSObject, MKAnnotation
         self.coordinate = coordinate
         
         // set variables to standard values
-        self.temperatureFarenheightString = "78.6"
-        self.temperatureFarenheightDouble = 78.6
-        self.temperatureCelciusString = "25.5"
-        self.temperatureCelciusDouble = 25.5
-        self.relativeHumidityPercentString = "78.0"
-        self.relativeHumidityPercentDouble = 78.0
-        self.altitudeFtString = "0.0"
-        self.altitudeFtDouble = 0.0
-        self.windVelocityMiHrString = "0.0"
-        self.windVelocityMiHrDouble = 0.0
-        self.windVelocityMiHrString = "0.0"
-        self.windVelocityMiHrDouble = 29.53
-        self.windAngleDegString = "0.0"
-        self.windAngleDegDouble = 0.0
-        self.barometricPressureInHgString = "0.0"
-        self.barometricPressureInHgDouble = 0.0
+        self.temperatureFarenheit = 78.6
+        self.relativeHumidityPercent = 78.0
+        self.altitudeFt = 0.0
+        self.windVelocityMiHr = 0
+        self.windAngleDeg = 0.0
+
+        self.barometricPressureInHg = 0.0
        
-        
         super.init()
         
         // Get specific values
         self.getWeather()
-        self.getAltitude()     
+        self.getAltitude()
     }
     
     var subtitle: String?
     {
         
-        return "Wind: " + windAngleDegString + "\u{00B0}" + //"\n" +
-        " " + windVelocityMiHrString + "mi/hr" //+ //"\n" +
+        return "Wind: " + String(windAngleDeg) + "\u{00B0}" + //"\n" +
+        " " + String(windVelocityMiHr) + "mi/hr" //+ //"\n" +
         //" Hum: " + relativeHumidityPercent + "\u{0025}" + //"\n" +
         //" Temp: " + temperatureFarenheight + "\u{00B0}" + //"\n" +
         //" Alt: " + altitudeFt + "ft" + //"\n" +
@@ -105,7 +81,7 @@ class TargetPin: NSObject, MKAnnotation
         
     }
     
-    @objc func getWeather()
+    func getWeather()
     {
         let wlat = String(self.coordinate.latitude)
         let wlon = String(self.coordinate.longitude)
@@ -122,7 +98,8 @@ class TargetPin: NSObject, MKAnnotation
 
         //http://api.openweathermap.org/data/2.5/weather?lat=34.67558593&lon=-82.8350379&&APPID=f876abf1b6b68c7d99b1f283568fb680
 
-        WeatherData.GlobalData.setUrl(userLat: String(coordinate.latitude),userLon: String(coordinate.longitude))
+        let weatherData = WeatherData.sharedInstance
+        weatherData.setUrl(userLat: String(coordinate.latitude),userLon: String(coordinate.longitude))
 
         let urlRequest = URLRequest(url: urlWeather)
 
@@ -172,9 +149,9 @@ class TargetPin: NSObject, MKAnnotation
         task.resume()
     }
 
-    @objc func getAltitude()
+    func getAltitude()
     {
-
+//        #if (arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
 
         let alat = String(self.coordinate.latitude)
         let alon = String(self.coordinate.longitude)
@@ -235,6 +212,14 @@ class TargetPin: NSObject, MKAnnotation
             }
         }
         task.resume()
+        
+//        #else
+//            let lat = CLLocationDegrees(Double(self.coordinate.latitude))
+//            let lon = CLLocationDegrees(Double(self.coordinate.longitude))
+//            let location = CLLocation(latitude: lat, longitude: lon)
+//            let elevation = (Double(location.altitude) * 1.09361) * 3
+//            self.altitudeFt = elevation
+//        #endif
     }
 
     func initVarsWeather(json: [String: AnyObject]){
@@ -242,46 +227,39 @@ class TargetPin: NSObject, MKAnnotation
         if(json["main"] != nil){
             if (json["main"]!["humidity"] != nil)
             {
-                self.relativeHumidityPercentString = String(describing: json["main"]!["humidity"]!!)
-                self.relativeHumidityPercentDouble = Double(relativeHumidityPercentString)!
+                self.relativeHumidityPercent = Double(String(describing: json["main"]!["humidity"]!!))!
             }
             else
             {
-                self.relativeHumidityPercentString = "NaN"
+                self.relativeHumidityPercent = 78/100
             }
 
             if (json["main"]!["pressure"] != nil)
             {
-                self.barometricPressureInHgString = String(describing: json["main"]!["pressure"]!!)// Conversion to Hg
-                self.barometricPressureInHgDouble = (Double(barometricPressureInHgString)! * 0.030)
+                self.barometricPressureInHg = (Double(String(describing: json["main"]!["pressure"]!!))! * 0.030)// Conversion to Hg
+  
 
             }
             else
             {
-                self.barometricPressureInHgString = "NaN"
-                self.barometricPressureInHgDouble = 0
+                self.barometricPressureInHg = 0
             }
 
             if (json["wind"]!["deg"] != nil && json["wind"] != nil && json["wind"]!["deg"]! != nil)
             {
-                self.windAngleDegString = String(describing: json["wind"]!["deg"]!!)
-                print("stringwind: " + windAngleDegString + String(windAngleDegDouble))
-                self.windAngleDegDouble = Double(windAngleDegString)!
-                      print("stringwind: " + windAngleDegString + String(windAngleDegDouble))
+                self.windAngleDeg = Double(String(describing: json["wind"]!["deg"]!!))!
             }
             else
             {
-                self.windAngleDegDouble = 0
+                self.windAngleDeg = 0
             }
             if (json["wind"]!["deg"] != nil && json["wind"] != nil && json["wind"]!["deg"]! != nil)
             {
-                 self.windVelocityMiHrString = String(describing: json["wind"]!["speed"]!!)
-                 self.windVelocityMiHrDouble = Double(windVelocityMiHrString)!
+                self.windVelocityMiHr = Double(String(describing: json["wind"]!["speed"]!!))!
             }
             else
             {
-                self.windVelocityMiHrString = "NaN"
-                self.windVelocityMiHrDouble = 0
+                self.windVelocityMiHr = 0
             }
             if (json["main"]!["temp"] != nil){
                 let str = (String(describing: json["main"]!["temp"]!!))
@@ -291,17 +269,11 @@ class TargetPin: NSObject, MKAnnotation
                 let farenheit = rankin - 459.67
                 let far = String(format:"%.2f",farenheit)
                 let cel = String(format:"%.2f",celcius)
-                self.temperatureFarenheightString = far
-                self.temperatureFarenheightDouble = Double(far)!
-                self.temperatureCelciusString = cel
-                self.temperatureCelciusDouble = Double(cel)!
+                self.temperatureFarenheit = Double(far)!
             }
             else
             {
-                self.temperatureFarenheightString = "NaN"
-                self.temperatureFarenheightDouble = 78.3
-                self.temperatureCelciusString = "NaN"
-                self.temperatureCelciusDouble = 40
+                self.temperatureFarenheit = 78.3
             }
         }
         else
@@ -317,16 +289,12 @@ class TargetPin: NSObject, MKAnnotation
 
     func initVarsAltitude(json: [String: AnyObject])
     {
-        let result = json["results"]! as! NSArray
-        let array0 = result[0] as! NSDictionary
-        var elevation = (array0["elevation"]!) as! Double
-        elevation = (elevation * 1.09361) * 3
-        self.altitudeFtString = String(format: "%.2f", elevation)
-        self.altitudeFtDouble = Double(altitudeFtString)!
+            let result = json["results"]! as! NSArray
+            let array0 = result[0] as! NSDictionary
+            var elevation = (array0["elevation"]!) as! Double
+            elevation = (elevation * 1.09361) * 3
+            self.altitudeFt = elevation
     }
-
-
-
     func initInvalidAltitude()
     {
         print("invalid call in altitude")

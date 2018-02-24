@@ -10,36 +10,28 @@ import UIKit
 import MapKit
 import Speech
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate  {
-    
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate
+{
     
     // Variables
-    // Timers
-    private var sockTimer = Timer()
-    private var textFieldTimer = Timer()
-    private var moaListener = Timer()
-    private var weatherTimer = Timer()
-    private var altitudeTimer = Timer()
     private var locationManager = CLLocationManager()
     
     private var heading = CLLocationDegrees()
     private var latDelta: CLLocationDegrees = 0.002
     private var lonDelta: CLLocationDegrees = 0.002
-    private var target: CLLocationCoordinate2D!
+    private var target: TargetPin!
     private var shooter: CLLocationCoordinate2D!
     private var flightpathPolyline = MKGeodesicPolyline()
     private var trueNorth : Double = 0
+    private var zoom : Double = 1000
     
     var microphoneOn = false
     var lockBearing : Bool = false
+    var centerMap : Bool = true
     var menuIsVisible: Bool = false
     
-    private var ballisticsBrain = BallisticsBrain()
-    func getBallisticsBrain() -> BallisticsBrain
-    {
-        return ballisticsBrain
-    }
-    
+    var ballisticCalculator = BallisticCalculator.sharedInstance
+    var weatherData = WeatherData.sharedInstance
     
     // View Outlets
     @IBOutlet weak var viewBehindStackView: UIView!
@@ -54,12 +46,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var compassButton: UIBarButtonItem!
     @IBOutlet weak var environmentButton: UIBarButtonItem!
     
+    
     // TextField Outlets
-    @IBOutlet weak var targetBearingTextField: UITextField!{
-        didSet{
-            
-        }
-    }
+    @IBOutlet weak var targetBearingTextField: UITextField!
     @IBOutlet weak var targetDistanceTextField: UITextField!
     @IBOutlet weak var zeroRangeTextField: UITextField!
     @IBOutlet weak var sightHeightTextField: UITextField!
@@ -74,7 +63,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var altitudeTextField: UITextField!
     
     // Label Outlets
-    @IBOutlet weak var degreeLabel: UILabel!
     @IBOutlet weak var labelMOA: UILabel!
     @IBOutlet weak var labelWMOA: UILabel!
     
@@ -83,6 +71,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var windSockTopC: NSLayoutConstraint!
     @IBOutlet weak var windSockRightC: NSLayoutConstraint!
       
+    @IBOutlet weak var moasLeadingC: NSLayoutConstraint!
     // View Did Load
     // *************************************************************************
     override func viewDidLoad()
@@ -91,45 +80,45 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         //set map delegate
         mapView.delegate = self
-        //mapView.register(TargetPin.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         // enable location services
         enableLocationServices(sender: self)
-        mapView.showsUserLocation = true;
-        centerMapOnLocation(location: locationManager.location!)
-        
-        //textFieldTimer = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.sinkTextFieldVariables), userInfo: nil, repeats: true)
-        
-        // Set wind Sock interval
-        setWindSock()
-        sockTimer = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.setWindSock), userInfo: nil, repeats: true)
-        
-        moaListener = Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(ViewController.setMOAs), userInfo: nil, repeats: true)
-        
-        
-        // get weather timer
-        getWeatherForCoordinate()
-        weatherTimer = Timer.scheduledTimer(timeInterval: 15.0, target: self, selector: #selector(getWeatherForCoordinate), userInfo: nil, repeats: true)
-        
-        // get altitude timer
-        getElevationForCoordinate()
-        altitudeTimer = Timer.scheduledTimer(timeInterval: 15.0, target: self, selector: #selector(getElevationForCoordinate), userInfo: nil, repeats: true)
         
           initializeTextFields()
           initializeCoreData()
         
         navigationCenterItem.title = " ∆ "
-
+        
+        centerMapOnLocation(location: locationManager.location!)
+        getWeatherForCoordinate()
+        
+        getElevationForCoordinate()
+    }
+    
+    func mapView(_ mapview: MKMapView, regionWillChangeAnimated: Bool)
+    {
+        if(centerMap)
+        {
+            lockBearing = true
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        if(centerMap)
+        {
+            self.zoom = self.mapView.camera.altitude
+            lockBearing = false
+        }
     }
     
     func initializeCoreData()
     {
-        targetDistanceTextField.text = String(ballisticsBrain.distanceYds)
-        ballisticCoefficientTextField.text = String(ballisticsBrain.bc)
-        zeroRangeTextField.text = String(ballisticsBrain.zero)
-        sightHeightTextField.text = String(ballisticsBrain.sh)
-        weightTextField.text = String(ballisticsBrain.projectileWeight)
-        muzzleVelocityTextField.text = String(ballisticsBrain.v)
+        targetDistanceTextField.text = String(ballisticCalculator.distanceYards)
+        ballisticCoefficientTextField.text = String(ballisticCalculator.ballisticCoefficient)
+        zeroRangeTextField.text = String(ballisticCalculator.zeroRange)
+        sightHeightTextField.text = String(ballisticCalculator.seightHeight)
+        weightTextField.text = String(ballisticCalculator.projectileWeight)
+        muzzleVelocityTextField.text = String(ballisticCalculator.muzzleVelocity)
     }
     
     func setKeyboardStyle(textField: UITextField)
@@ -166,33 +155,34 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     @objc func setMOAs()
     {
-        if(!ballisticsBrain.results.isEmpty)
+        if(!ballisticCalculator.results.isEmpty)
         {
-            if(ballisticsBrain.results[0] != 0)
+            if(ballisticCalculator.results[0] != 0)
             {
-                let up = ballisticsBrain.results[2]
-                if(up >= 0)
+                let up = ballisticCalculator.results[2]
+                if(up > 0)
                 {
-                    labelMOA.text = String(format: "\u{2b06} %.2lf", up)
+                    labelMOA.text = String(format: "\u{2b06} %.2lf", abs(up))
                 }
                 else
                 {
-                   labelMOA.text = String(format: "\u{2b07} %.2lf", (up * -1))
+                   labelMOA.text = String(format: "\u{2b07} %.2lf", abs(up))
                 }
                 
-                let rt = ballisticsBrain.results[5]
+                let rt = ballisticCalculator.results[5]
                 if(rt > 0)
                 {
-                    labelWMOA.text = String(format: "\u{27a1} %.2lf", rt)
+                    labelWMOA.text = String(format: "\u{27a1} %.2lf", abs(rt))
                 }
                 else
                 {
-                    labelWMOA.text = String(format: "\u{2b05} %.2lf", (rt * -1))
+                    labelWMOA.text = String(format: "\u{2b05} %.2lf", abs(rt))
                 }
-                
+                //moasLeadingC.constant = -80
                 //Animate the keyboard opening and textfield moving
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations:
                     {
+                        
                         self.view.layoutIfNeeded()
                 }) { (animationComplete) in }
             }
@@ -209,15 +199,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }
     }
     
-    @objc func sinkTextFieldVariables()
+    func sinkTextFieldVariables()
     {
         targetBearingTextField.text = String(self.trueNorth)
-        temperatureTextField.text = String(WeatherData.GlobalData.temperatureF)
-        pressureTextField.text = String(WeatherData.GlobalData.pressure)
-        humidityTextField.text = String(WeatherData.GlobalData.humidity)
-        windSpeedTextField.text = String(WeatherData.GlobalData.windspeed)
-        windDirectionTextField.text = String(WeatherData.GlobalData.degrees)
-        altitudeTextField.text = String(WeatherData.GlobalData.altitude)
+        temperatureTextField.text = String(weatherData.temperatureF)
+        pressureTextField.text = String(weatherData.pressure)
+        humidityTextField.text = String(weatherData.humidity)
+        windSpeedTextField.text = String(weatherData.windSpeed)
+        windDirectionTextField.text = String(weatherData.windDirection)
+        altitudeTextField.text = String(weatherData.altitude)
     }
     
     // Keyboard Close Function
@@ -228,14 +218,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         {
             operateMenuButton()
         }
-        
     }
 
     @IBOutlet weak var stackViewTopC: NSLayoutConstraint!
     
     // Might not be used ***
     @IBAction func touchUpInsideTextField(_ sender: UITextField) {
-        print("touched " + String(describing: sender))
         switch(sender)
         {
         case targetBearingTextField:
@@ -327,7 +315,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             stackViewTopC.constant = 0
             self.view.endEditing(true)
          
-            ballisticsBrain.saveCoreData()
+            ballisticCalculator.saveCoreData()
         }
         
         UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations:
@@ -340,7 +328,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // Unpin Button Function
     func removePinsFromMap()
     {
-        print("removing pins")
         let annotationsToRemove = mapView.annotations.filter
         {
             $0 !== mapView.userLocation
@@ -350,17 +337,44 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         mapView.remove(flightpathPolyline)
     }
     
+    
+    
     // Target Button Function
     func dropTargetUsingData()
     {
-        let dist = ballisticsBrain.distanceYds * 0.0009144
-        if (dist > 0)
+        if targetDistanceTextField.text != ""
         {
-        let newcoord : CLLocationCoordinate2D = shooter.translate(bearing: self.trueNorth, distanceKm: dist)
+            ballisticCalculator.distanceYards = Double(targetDistanceTextField.text!)!
+            let distKm = ballisticCalculator.distanceKilometers
+            if (distKm > 0)
+            {
+                
+                let newcoord : CLLocationCoordinate2D = shooter.translate(bearing: self.trueNorth, distanceKm: distKm)
             
-        let pressPin = TargetPin(title: "Target", locationName: "TestLocation", discipline: "Target", coordinate: newcoord)
+               
+                let pressPin = TargetPin(title: "Target", locationName: "TestLocation", discipline: "Target", coordinate: newcoord)
             
-            mapView.addAnnotation(pressPin)
+                //mapView.addAnnotation(pressPin)
+                //mapView.selectAnnotation(pressPin, animated: false)
+                
+                ballisticCalculator.setBallistics(shooter: shooter, target: pressPin, heading: self.trueNorth)
+                setMOAs()
+                
+                mapView.remove(flightpathPolyline)
+                
+                let coordinate: [CLLocationCoordinate2D] = [shooter, pressPin.coordinate]
+                
+                flightpathPolyline = MKGeodesicPolyline(coordinates: coordinate, count: 2)
+                
+                print("polyline: (" +  String(flightpathPolyline.coordinate.latitude) + ", " + String(flightpathPolyline.coordinate
+                    .longitude))
+                
+                mapView.add(flightpathPolyline, level: MKOverlayLevel.aboveLabels)
+            }
+            else
+            {
+                alertEnterDistance(self)
+            }
         }
         else
         {
@@ -371,7 +385,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // Environment Button Function
     func useDontUseEnvironment()
     {
-        ballisticsBrain.environmentOn = !ballisticsBrain.environmentOn
+        ballisticCalculator.environmentOn = !ballisticCalculator.environmentOn
         environmentAlert(self)
     }
     
@@ -383,18 +397,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         if(self.lockBearing)
         {
-            degreeLabel.textColor = UIColor.red
+            centerMap = false
         }
         else
         {
-            degreeLabel.textColor = UIColor.black
+            centerMap = true
         }
     }
     
     // Altitude Button Function
     func useDontUseAltitude()
     {
-        ballisticsBrain.altitudeOn = !ballisticsBrain.altitudeOn
+        ballisticCalculator.angleCorrection = !ballisticCalculator.angleCorrection
         altitudeAlert(self)
     }
     
@@ -419,6 +433,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBAction func removePinsAction(_ sender: Any)
     {
         removePinsFromMap()
+        clearBallistics()
+        setMOAs()
+    }
+    
+    func clearBallistics()
+    {
+        ballisticCalculator.results = []
+    }
+    
+    @IBAction func windSockButton(_ sender: UIButton)
+    {
+        setWindSock()
+        sinkTextFieldVariables()
     }
     
     // drop target point and clear old targets
@@ -447,38 +474,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // TextField Action Control
     @IBAction func textFieldAction(_ sender: UITextField)
     {
-        print("editing ended")
         if(sender.hasText)
         {
             let variable = sender.text!
             switch sender
             {
-            case targetBearingTextField:
-                ballisticsBrain.setValue(type: "USER_BEARING", variable: variable)
             case targetDistanceTextField:
-                ballisticsBrain.setValue(type: "TARGET_DISTANCE", variable: variable)
+                ballisticCalculator.setValue(type: "TARGET_DISTANCE", variable: variable)
             case zeroRangeTextField:
-                ballisticsBrain.setValue(type: "ZERO_RANGE", variable: variable)
+                ballisticCalculator.setValue(type: "ZERO_RANGE", variable: variable)
             case sightHeightTextField:
-                ballisticsBrain.setValue(type: "SIGHT_HEIGHT", variable: variable)
+                ballisticCalculator.setValue(type: "SIGHT_HEIGHT", variable: variable)
             case ballisticCoefficientTextField:
-                ballisticsBrain.setValue(type: "BALLISTIC_COEFFICIENT", variable: variable)
+                ballisticCalculator.setValue(type: "BALLISTIC_COEFFICIENT", variable: variable)
             case weightTextField:
-                ballisticsBrain.setValue(type: "PROJECTILE_WEIGHT", variable: variable)
+                ballisticCalculator.setValue(type: "PROJECTILE_WEIGHT", variable: variable)
             case muzzleVelocityTextField:
-                ballisticsBrain.setValue(type: "MUZZLE_VELOCITY", variable: variable)
-            case temperatureTextField:
-                ballisticsBrain.setValue(type: "OUTSIDE_TEMPERATURE", variable: variable)
-            case pressureTextField:
-                ballisticsBrain.setValue(type: "PRESSURE", variable: variable)
-            case humidityTextField:
-                ballisticsBrain.setValue(type: "HUMIDITY", variable: variable)
-            case windSpeedTextField:
-                ballisticsBrain.setValue(type: "WIND_SPEED", variable: variable)
-            case windDirectionTextField:
-                ballisticsBrain.setValue(type: "WIND_DIRECTION", variable: variable)
-            case altitudeTextField:
-                ballisticsBrain.setValue(type: "ALTITUDE", variable: variable)
+                ballisticCalculator.setValue(type: "MUZZLE_VELOCITY", variable: variable)
             default:
                 break
             }
@@ -489,16 +501,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     //Control The degrees that the wind Sock Points
     @objc func setWindSock()
     {
-        self.degreeLabel.text = String(describing: Int(self.trueNorth))
+        
         UIView.animate(withDuration: 0.5)
         {
-            self.windSock.transform = CGAffineTransform(rotationAngle: CGFloat(((WeatherData.GlobalData.degrees -
+            self.windSock.transform = CGAffineTransform(rotationAngle: CGFloat(((self.weatherData.windDirection -
                 self.mapView.camera.heading) * Double.pi)/180))
-            
-            if(!self.lockBearing)
-            {
-                self.trueNorth  = Double(self.mapView.camera.heading)
-            }
         }
     }
     
@@ -530,54 +537,62 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             //Pin Drop Skipped for 5 seconds
         }
     }
-    
+
     // Did Select Annotation
     // *************************************************************************
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
     {
-        let selectedAnnotation = view.annotation
         
-        setWindSock()
-        
-        if(selectedAnnotation != nil && ballisticsBrain.distanceYds > 0)
+        if let selectedAnnotation = view.annotation as? TargetPin
         {
-            target = CLLocationCoordinate2D(latitude: (selectedAnnotation?.coordinate.latitude)!, longitude: (selectedAnnotation?.coordinate.longitude)!)
-            
-            //Update the Initial Pin Selection
-            if(target != nil && shooter != nil)
+            //selectedAnnotation.getWeather()
+            //selectedAnnotation.getAltitude()
+            setWindSock()
+        
+            if(ballisticCalculator.distanceYards > 0)
             {
-                mapView.remove(flightpathPolyline)
                 
-                let coordinate: [CLLocationCoordinate2D] = [shooter, target]
+                target = selectedAnnotation
                 
-                flightpathPolyline = MKGeodesicPolyline(coordinates: coordinate, count: 2)
-                
-                print("polyline: (" +  String(flightpathPolyline.coordinate.latitude) + ", " + String(flightpathPolyline.coordinate
-                    .longitude))
-                
-                mapView.add(flightpathPolyline, level: MKOverlayLevel.aboveLabels)
-                
-                let loc1 = CLLocation(latitude: shooter.latitude , longitude: shooter.longitude)
-                let loc2 = CLLocation(latitude: target.latitude, longitude: target.longitude)
-                
-                ballisticsBrain.distinMeters = loc1.distance(from: loc2)
-                ballisticsBrain.distanceYds = (Double(ballisticsBrain.distinMeters) * 1.09361)
-                ballisticsBrain.angleset()
-                ballisticsBrain.setBallistics(shooter: shooter, target: target)
-               // alertBallistics(self)
+                //Update the Initial Pin Selection
+                if(target != nil && shooter != nil)
+                {
+                    getWeatherForCoordinate()
+                    sinkTextFieldVariables()
+                    //getElevationForCoordinate()
+                    
+                    mapView.remove(flightpathPolyline)
+                    
+                    let coordinate: [CLLocationCoordinate2D] = [shooter, target.coordinate]
+                    
+                    flightpathPolyline = MKGeodesicPolyline(coordinates: coordinate, count: 2)
+                    
+                    print("polyline: (" +  String(flightpathPolyline.coordinate.latitude) + ", " + String(flightpathPolyline.coordinate
+                        .longitude))
+                    
+                    mapView.add(flightpathPolyline, level: MKOverlayLevel.aboveLabels)
+                    
+                    let loc1 = CLLocation(latitude: shooter.latitude , longitude: shooter.longitude)
+                    let loc2 = CLLocation(latitude: target.coordinate.latitude, longitude: target.coordinate.longitude)
+                    
+                    ballisticCalculator.distanceYards = (Double(loc1.distance(from: loc2)) * 1.09361)
+                    ballisticCalculator.setBallistics(shooter: shooter, target: target, heading: -1)
+                    setMOAs()
+                }
             }
         }
     }
 
     // Center Map
     // *************************************************************************
-    let regionRadius: CLLocationDistance = 25
+    let regionRadius: CLLocationDistance = 50
     func centerMapOnLocation(location: CLLocation)
     {
-        print("Entered Center Map on Location")
-        let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, regionRadius, regionRadius)
-        
-        mapView.setRegion(coordinateRegion, animated: true)
+        let l1 = location.coordinate.latitude + 0.005
+        let l2 = location.coordinate.longitude
+        let loc = CLLocation(latitude: l1, longitude: l2)
+        let reg = MKCoordinateRegionMakeWithDistance(loc.coordinate, CLLocationDistance(100), CLLocationDistance(100))
+        mapView.setRegion(reg, animated: true)
     }
     
     // *************************************************************************
@@ -588,13 +603,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // *************************************************************************
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading)
     {
+        
+        //centerMapOnLocation(location: locationManager.location!)
         heading = newHeading.trueHeading - newHeading.magneticHeading
+        setWindSock()
         if(!lockBearing)
         {
-            self.mapView.camera.heading = newHeading.magneticHeading
+            //self.mapView.camera.heading = newHeading.magneticHeading
+            
+            let camera = MKMapCamera(lookingAtCenter: (locationManager.location?.coordinate)!, fromDistance: self.zoom, pitch: 0, heading: newHeading.trueHeading)
+            self.mapView.setCamera(camera, animated: false)
+            self.trueNorth = newHeading.trueHeading
+            navigationCenterItem.title = String(describing: Int(newHeading.trueHeading))
+            
+            targetBearingTextField.text = String(describing: newHeading.trueHeading)
         }
         //centerMapOnLocation(location: locationManager.location!)
     }
+    
     
     // Manage Location Services
     // *************************************************************************
@@ -646,18 +672,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         {
             mapView.remove(flightpathPolyline)
             
-            var coordinate: [CLLocationCoordinate2D] = [shooter, target]
+            var coordinate: [CLLocationCoordinate2D] = [shooter, target.coordinate]
             
             flightpathPolyline = MKGeodesicPolyline(coordinates: &coordinate, count: 2)
             
             mapView.add(flightpathPolyline)
             
             let loc1 = CLLocation(latitude: shooter.latitude , longitude: shooter.longitude)
-            let loc2 = CLLocation(latitude: target.latitude, longitude: target.longitude)
+            let loc2 = CLLocation(latitude: target.coordinate.latitude, longitude: target.coordinate.longitude)
             
-            ballisticsBrain.distinMeters = loc1.distance(from: loc2)
-            ballisticsBrain.resetDistance()
-            ballisticsBrain.setBallistics(shooter: shooter, target: target)
+            ballisticCalculator.distanceYards = (Double(loc1.distance(from: loc2)) * 1.09361)
+            ballisticCalculator.setBallistics(shooter: shooter, target: target, heading: -1)
+            
         }
     }
     
@@ -665,7 +691,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // *************************************************************************
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
-       // centerMapOnLocation(location: locationManager.location!)
+        
+        #if (arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
+            getElevationForCoordinate()
+            setWindSock()
+            sinkTextFieldVariables()
+        #else
+            weatherData.altitude = ((locationManager.location?.altitude)! * 1.09361) * 3
+            altitudeTextField.text = String(describing: (((locationManager.location?.altitude)! * 1.09361) * 3))
+        #endif
+        if(!lockBearing)
+        {
+
+        }
         // draw polyline from shooter to target
         drawShotLine(location: locations[0])
     }
@@ -677,11 +715,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         if let polyline = overlay as? MKGeodesicPolyline
         {
             let testlineRenderer = MKPolylineRenderer(polyline: polyline)
-            testlineRenderer.strokeColor = UIColor.black
+            testlineRenderer.strokeColor = UIColor.magenta
             let lineDashPatterns: [NSNumber]?  = [2, 4, 2]
             testlineRenderer.lineDashPattern = lineDashPatterns
             testlineRenderer.lineDashPhase = CGFloat(0.87)
-            testlineRenderer.lineWidth = 1.0
+            testlineRenderer.lineWidth = 1.5
             return testlineRenderer
         }
         fatalError("Something wrong with renderer...")
@@ -692,19 +730,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
 
         guard let annotation = annotation as? TargetPin else { return nil }
-
+        
         let identifier = "marker"
-        var view: MKAnnotationView
-
+        var view: MKMarkerAnnotationView
+        
         if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-            as? MKAnnotationView
+            as? MKMarkerAnnotationView
         {
             dequeuedView.annotation = annotation
             view = dequeuedView
         }
         else
         {
-            view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             view.canShowCallout = true
             view.calloutOffset = CGPoint(x: -5, y: 5)
             view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
@@ -723,16 +761,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     // URLRequest Get Weather Weather API
     // *************************************************************************
-    @objc func getWeatherForCoordinate()
+    func getWeatherForCoordinate()
     {
         guard let coordinate = locationManager.location?.coordinate
             else
         {
             return
         }
-        WeatherData.GlobalData.setUrl(userLat: String(describing: coordinate.latitude),userLon: String(describing: coordinate.longitude))
+        weatherData.setUrl(userLat: String(describing: coordinate.latitude),userLon: String(describing: coordinate.longitude))
         
-        let urlRequest = URLRequest(url: WeatherData.GlobalData.url!)
+        let urlRequest = URLRequest(url: weatherData.url!)
         
         // set up the session
         let config = URLSessionConfiguration.default
@@ -767,35 +805,37 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                     print("error trying to convert weather data to JSON")
                     return
                 }
-                WeatherData.GlobalData.initVars(json: weather as [String: AnyObject])
+                self.weatherData.initVars(json: weather as [String: AnyObject])
+                
             }
             catch
             {
                 print("error trying to convert data to JSON")
-                WeatherData.GlobalData.initInvalid()
+                self.weatherData.initInvalid()
                 return
             }
+           
         }
         task.resume()
     }
     
     // URLRequest Get Elevation Google
-    // *************************************************************************
-    @objc func getElevationForCoordinate()
+//     *************************************************************************
+    func getElevationForCoordinate()
     {
         guard let coordinate = locationManager.location?.coordinate
             else
         {
             return
         }
-        WeatherData.GlobalData.setUrl(userLat: String(coordinate.latitude),userLon: String(coordinate.longitude))
-        
-        let urlRequest = URLRequest(url: WeatherData.GlobalData.alturl!)
-        
+        weatherData.setUrl(userLat: String(coordinate.latitude),userLon: String(coordinate.longitude))
+
+        let urlRequest = URLRequest(url: weatherData.alturl!)
+
         // set up the session
         let config = URLSessionConfiguration.default
         let session = URLSession(configuration: config)
-        
+
         // make the request
         let task = session.dataTask(with: urlRequest)
         {
@@ -825,15 +865,108 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                     print("error trying to convert elevation data to JSON")
                     return
                 }
-                WeatherData.GlobalData.initElevation(json: elevation as [String: AnyObject])
+                self.weatherData.initElevation(json: elevation as [String: AnyObject])
             }
             catch
             {
                 print("error trying to convert data to JSON")
-                WeatherData.GlobalData.initAltInvalid()
+                self.weatherData.initAltInvalid()
                 return
             }
         }
         task.resume()
+    }
+    
+
+}
+
+let MERCATOR_OFFSET = 268435456.0
+let MERCATOR_RADIUS = 85445659.44705395
+let DEGREES = 180.0
+
+extension MKMapView
+{
+    //MARK: Map Conversion Methods
+    private func longitudeToPixelSpaceX(longitude:Double)->Double{
+        return round(MERCATOR_OFFSET + MERCATOR_RADIUS * longitude * Double.pi / DEGREES)
+    }
+    
+    private func latitudeToPixelSpaceY(latitude:Double)->Double{
+        return round(MERCATOR_OFFSET - MERCATOR_RADIUS * log((1 + sin(latitude * Double.pi / DEGREES)) / (1 - sin(latitude * Double.pi / DEGREES))) / 2.0)
+    }
+    
+    private func pixelSpaceXToLongitude(pixelX:Double)->Double{
+        return ((round(pixelX) - MERCATOR_OFFSET) / MERCATOR_RADIUS) * DEGREES / Double.pi
+        
+    }
+    
+    private func pixelSpaceYToLatitude(pixelY:Double)->Double{
+        return (Double.pi / 2.0 - 2.0 * atan(exp((round(pixelY) - MERCATOR_OFFSET) / MERCATOR_RADIUS))) * DEGREES / Double.pi
+    }
+    
+    private func coordinateSpanWithCenterCoordinate(centerCoordinate:CLLocationCoordinate2D, zoomLevel:Double)->MKCoordinateSpan{
+        
+        // convert center coordiate to pixel space
+        let centerPixelX = longitudeToPixelSpaceX(longitude: centerCoordinate.longitude)
+        let centerPixelY = latitudeToPixelSpaceY(latitude: centerCoordinate.latitude)
+        
+        // determine the scale value from the zoom level
+        let zoomExponent:Double = 20.0 - zoomLevel
+        let zoomScale:Double = pow(2.0, zoomExponent)
+        
+        // scale the map’s size in pixel space
+        let mapSizeInPixels = self.bounds.size
+        let scaledMapWidth = Double(mapSizeInPixels.width) * zoomScale
+        let scaledMapHeight = Double(mapSizeInPixels.height) * zoomScale
+        
+        // figure out the position of the top-left pixel
+        let topLeftPixelX = centerPixelX - (scaledMapWidth / 2.0)
+        let topLeftPixelY = centerPixelY - (scaledMapHeight / 2.0)
+        
+        // find delta between left and right longitudes
+        let minLng = pixelSpaceXToLongitude(pixelX: topLeftPixelX)
+        let maxLng = pixelSpaceXToLongitude(pixelX: topLeftPixelX + scaledMapWidth)
+        let longitudeDelta = maxLng - minLng
+        
+        let minLat = pixelSpaceYToLatitude(pixelY: topLeftPixelY)
+        let maxLat = pixelSpaceYToLatitude(pixelY: topLeftPixelY + scaledMapHeight)
+        let latitudeDelta = -1.0 * (maxLat - minLat)
+        
+        return MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+    }
+    
+    func setCenterCoordinate(centerCoordinate:CLLocationCoordinate2D, zoomLevel:Double, animated:Bool){
+        // clamp large numbers to 28
+        var zoomLevel = zoomLevel
+        zoomLevel = min(zoomLevel, 900)
+        
+        // use the zoom level to compute the region
+        let span = self.coordinateSpanWithCenterCoordinate(centerCoordinate: centerCoordinate, zoomLevel: zoomLevel)
+        let region = MKCoordinateRegionMake(centerCoordinate, span)
+        if region.center.longitude == -180.00000000{
+            print("Invalid Region")
+        }
+        else{
+            self.setRegion(region, animated: animated)
+        }
+    }
+    
+    func getZoom() -> Double {
+        // function returns current zoom of the map
+        
+        
+        var angleCamera = self.camera.heading
+        if angleCamera > 270 {
+            angleCamera = 360 - angleCamera
+        } else if angleCamera > 90 {
+            angleCamera = fabs(angleCamera - 180)
+        }
+        let angleRad = Double.pi * angleCamera / 180 // camera heading in radians
+        let width = Double(self.frame.size.width)
+        let height = Double(self.frame.size.height)
+        let heightOffset : Double = 20 // the offset (status bar height) which is taken by MapKit into consideration to calculate visible area height
+        // calculating Longitude span corresponding to normal (non-rotated) width
+        let spanStraight = width * self.region.span.longitudeDelta / (width * cos(angleRad) + (height - heightOffset) * sin(angleRad))
+        return log2(360 * ((width / 256) / spanStraight)) + 1;
     }
 }

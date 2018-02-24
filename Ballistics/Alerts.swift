@@ -31,8 +31,9 @@ func alertEnterDistance(_ sender: ViewController)
 // Distance Missing Alert
 func altitudeAlert(_ sender: ViewController)
 {
+    let ballisticCalculator = BallisticCalculator.sharedInstance
     var altitudeDesc : String
-    if(sender.getBallisticsBrain().altitudeOn)
+    if(ballisticCalculator.angleCorrection)
     {
         altitudeDesc = "On"
         sender.altitudeButton.tintColor = sender.view.tintColor
@@ -53,8 +54,9 @@ func altitudeAlert(_ sender: ViewController)
 // Environment on off Alert
 func environmentAlert(_ sender: ViewController)
 {
+    let ballisticCalculator = BallisticCalculator.sharedInstance
     var environmentDesc : String
-    if(sender.getBallisticsBrain().environmentOn)
+    if(ballisticCalculator.environmentOn)
     {
         environmentDesc = "On"
         sender.environmentButton.tintColor = sender.view.tintColor
@@ -117,29 +119,48 @@ func microphoneAlert(_ sender: ViewController)
 // Ballistics data popup alert
 func alertBallistics(_ sender: ViewController)
 {
+    let ballisticCalculator = BallisticCalculator.sharedInstance
     var message : String
-    if(!sender.getBallisticsBrain().results.isEmpty)
+
+    if(!ballisticCalculator.results.isEmpty)
     {
-        if(sender.getBallisticsBrain().results[0] == 0)
+        if(ballisticCalculator.results[0] == 0)
         {
             message = "Target is out of range"
         }
         else
         {
-            message = String(sender.getBallisticsBrain().bc) + " BC\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[0]) + " Range (Yds)\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[1]) + " Drop  (in)\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[2]) + " Drop  (MoA)\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[6]) + " Velocity  (ft/s)\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[4]) + " Wind  (in)\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[5]) + " Wind  (MoA)\n"
-                +   String(format: "%d",(Int(sender.getBallisticsBrain().results[9]))) + " Energy  (ft-lb)\n"
-                +   String(format: "%.2lf", sender.getBallisticsBrain().results[3]) + " Time  (s)\n"
+            message = //"(Corrected BC) "       +   String(format: "%.3lf", ballisticCalculator.correctedBallisticCoefficient)
+                   "Range (Yds) "       +   String(format: "%d", Int32(ballisticCalculator.results[0]))
+                 + "\nHypotenuse (Yds) "       +   String(format: "%d", Int32(ballisticCalculator.hypotenuseYards))
+                 + "\nEnergy (ft-lb)"      +   String(format: "%d",(Int(ballisticCalculator.results[9])))
+                 + "\nVelocity (ft/s)"     +   String(format: "%.2lf", ballisticCalculator.results[6])
+                 + "\nTime (s)"            +   String(format: "%.2lf", ballisticCalculator.results[3])
+                 + "\nAngle (\u{00b0})"     +   String(format: "%.2lf", ballisticCalculator.shotAngle)
+                 + "\nHeight (yds)"           +   String(format: "%.2lf", ballisticCalculator.riseInElevation)
+                 + "\nDrop (in)"           +   String(format: "%.2lf", ballisticCalculator.results[1])
+                 + "\nDrop (MoA)"          +   String(format: "%.2lf", ballisticCalculator.results[2])
+                 + "\nWind (in)"           +   String(format: "%.2lf", ballisticCalculator.results[4])
+                 + "\nWind (MoA)"          +   String(format: "%.2lf", ballisticCalculator.results[5])
+           
         }
         let alert = UIAlertController(title: "Ballistics", message: message, preferredStyle: .alert)
     
         alert.addAction(UIAlertAction(title: "Got It", style: .default, handler: nil))
     
         sender.present(alert, animated: true)
+    }
+}
+
+extension String {
+    func stringByLeftPaddingTo(length newLength : Int) -> String {
+        let length = self.characters.count
+        if length < newLength {
+            // Prepend `newLength - length` space characters:
+            return String(repeating: " ", count: newLength - length) + self
+        } else {
+            // Truncate to the rightmost `newLength` characters:
+            return self.substring(from: self.index(endIndex, offsetBy: -newLength))
+        }
     }
 }

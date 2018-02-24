@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -278,30 +277,17 @@
                                 </subviews>
                                 <gestureRecognizers/>
                             </stackView>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="1OK-wR-MQd">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="hybrid" showsUserLocation="YES" showsPointsOfInterest="NO" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1OK-wR-MQd">
                                 <rect key="frame" x="289" y="64" width="86" height="559"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="559" id="FLd-Ba-ee4"/>
                                 </constraints>
                                 <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="Mhi-Ma-qHw"/>
                                     <outletCollection property="gestureRecognizers" destination="CG2-4F-SLE" appends="YES" id="zQ7-J9-Us3"/>
                                 </connections>
                             </mapView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="360" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GYO-MP-p9T">
-                                <rect key="frame" x="161" y="64" width="53" height="33.5"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="28"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O6z-sV-4ss">
-                                <rect key="frame" x="214" y="64" width="9" height="20.5"/>
-                                <string key="text">˚
-</string>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qzt-rM-Z6w">
                                 <rect key="frame" x="296" y="66" width="39" height="39"/>
                                 <constraints>
@@ -309,6 +295,9 @@
                                     <constraint firstAttribute="width" constant="39" id="gV9-K7-sKo"/>
                                 </constraints>
                                 <state key="normal" image="compass.png" backgroundImage="sock 100x100.png"/>
+                                <connections>
+                                    <action selector="windSockButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ddh-Fp-prc"/>
+                                </connections>
                             </button>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mtM-hb-gRV">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
@@ -350,14 +339,16 @@
                             </toolbar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLG-vg-Gof">
                                 <rect key="frame" x="369.5" y="575" width="5.5" height="30"/>
+                                <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <nil key="textColor"/>
+                                <color key="textColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jU7-yg-46x">
-                                <rect key="frame" x="369.5" y="527" width="5.5" height="30"/>
+                                <rect key="frame" x="369.5" y="545" width="5.5" height="30"/>
+                                <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <nil key="textColor"/>
+                                <color key="textColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -365,32 +356,27 @@
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="3Wh-9b-iMy"/>
-                            <constraint firstItem="GYO-MP-p9T" firstAttribute="top" secondItem="1OK-wR-MQd" secondAttribute="top" id="52g-TA-7pP"/>
                             <constraint firstAttribute="trailing" secondItem="1OK-wR-MQd" secondAttribute="trailing" id="8dX-Gr-VKG"/>
                             <constraint firstItem="1OK-wR-MQd" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="8ic-fl-5W7"/>
-                            <constraint firstItem="GYO-MP-p9T" firstAttribute="centerX" secondItem="1OK-wR-MQd" secondAttribute="centerX" id="BhR-VI-OJE"/>
                             <constraint firstItem="1OK-wR-MQd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="ChJ-iI-ymi"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="CiJ-ab-Ok6"/>
-                            <constraint firstItem="O6z-sV-4ss" firstAttribute="leading" secondItem="GYO-MP-p9T" secondAttribute="trailing" id="Coe-64-yAm"/>
                             <constraint firstItem="SAE-vc-jUU" firstAttribute="centerY" secondItem="e8G-A5-RT9" secondAttribute="centerY" id="Iha-2e-6HV"/>
                             <constraint firstItem="SAE-vc-jUU" firstAttribute="leading" secondItem="e8G-A5-RT9" secondAttribute="trailing" constant="2" id="OeA-Mv-6gR"/>
                             <constraint firstItem="jU7-yg-46x" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="PZA-lg-M4I"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="top" secondItem="OLG-vg-Gof" secondAttribute="bottom" constant="18" id="QgI-C1-Ed0"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Rvo-ne-DgW"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="bottom" secondItem="qj8-lh-q9Q" secondAttribute="bottom" id="TSp-AN-lbr"/>
-                            <constraint firstItem="qzt-rM-Z6w" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="O6z-sV-4ss" secondAttribute="trailing" constant="73" id="ZHb-6c-0Cs"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="top" secondItem="qj8-lh-q9Q" secondAttribute="top" id="bIj-my-LU1"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="trailing" secondItem="1OK-wR-MQd" secondAttribute="trailing" id="bTp-26-ls6"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="leading" secondItem="qj8-lh-q9Q" secondAttribute="leading" id="dlU-S8-qqF"/>
-                            <constraint firstItem="O6z-sV-4ss" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="eqO-v5-Xxb"/>
                             <constraint firstItem="OLG-vg-Gof" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="fPV-mN-lxy"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="gJa-Kp-2Sz"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qzt-rM-Z6w" secondAttribute="trailing" constant="40" id="iCG-sl-BqF"/>
                             <constraint firstItem="SAE-vc-jUU" firstAttribute="trailing" secondItem="qj8-lh-q9Q" secondAttribute="trailing" id="kc8-vo-bce"/>
                             <constraint firstItem="qzt-rM-Z6w" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="2" id="nuf-Ma-4IE"/>
                             <constraint firstItem="1OK-wR-MQd" firstAttribute="bottom" secondItem="mtM-hb-gRV" secondAttribute="top" id="oi6-4G-p9d"/>
-                            <constraint firstItem="OLG-vg-Gof" firstAttribute="top" secondItem="jU7-yg-46x" secondAttribute="bottom" constant="18" id="rOu-VJ-J1p"/>
                             <constraint firstItem="OLG-vg-Gof" firstAttribute="leading" secondItem="jU7-yg-46x" secondAttribute="leading" id="sZo-Jw-WpB"/>
+                            <constraint firstItem="jU7-yg-46x" firstAttribute="bottom" secondItem="OLG-vg-Gof" secondAttribute="top" id="ybj-kp-HFj"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -412,7 +398,6 @@
                         <outlet property="altitudeTextField" destination="A0J-K2-Gct" id="dkq-OG-7hO"/>
                         <outlet property="ballisticCoefficientTextField" destination="Mjw-3g-hq9" id="nNg-Vo-HFx"/>
                         <outlet property="compassButton" destination="M2h-QR-uIO" id="ZqC-zX-7ku"/>
-                        <outlet property="degreeLabel" destination="GYO-MP-p9T" id="ZDc-ap-kSO"/>
                         <outlet property="environmentButton" destination="hUN-yJ-0Zw" id="2by-bw-ksa"/>
                         <outlet property="humidityTextField" destination="Sw9-qX-c2Z" id="Oa1-mD-KiZ"/>
                         <outlet property="labelMOA" destination="jU7-yg-46x" id="aoZ-jk-Rji"/>
@@ -420,6 +405,7 @@
                         <outlet property="leadingC" destination="ChJ-iI-ymi" id="bVs-M1-b0Z"/>
                         <outlet property="mapView" destination="1OK-wR-MQd" id="Zaf-ba-gO4"/>
                         <outlet property="microphoneButton" destination="U4W-7z-ruR" id="g11-uO-tBZ"/>
+                        <outlet property="moasLeadingC" destination="sZo-Jw-WpB" id="t9P-9S-HI2"/>
                         <outlet property="muzzleVelocityTextField" destination="gPC-7v-WFe" id="eaE-Y2-oAD"/>
                         <outlet property="navigationCenterItem" destination="RKZ-8i-VGG" id="LS7-bM-cM8"/>
                         <outlet property="pressureTextField" destination="HZa-2O-1oI" id="KmZ-Pr-CH7"/>

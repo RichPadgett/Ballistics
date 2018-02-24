@@ -13,7 +13,187 @@ import CoreData
 
 class BallisticCalculator
 {
-    static let shared = BallisticCalculator()
+    static let sharedInstance = BallisticCalculator()
+    
+    var environmentOn : Bool = true
+    var altitudeOn : Bool = true
+    
+    var results : [Double]
+    var correctedBallisticCoefficient : Double
+    var riseInElevation : Double
+    var shotAngle : Double
+    
+    // Ballistic Core Data Variables
+    var appDeligate : AppDelegate
+    var context : NSManagedObjectContext
+    var ballisticsEntityDescription : NSEntityDescription?
+    var ballisticsEntity : NSManagedObject
+    
+    //Ballistic Data Variables
+    var distanceYards : Double
+    var distanceMeters : Double {
+        get {
+            return distanceYards / 1.09361
+        }
+    }
+    var distanceKilometers : Double {
+        get {
+            return distanceYards * 0.0009144
+        }
+    }
+    
+    var hypotenuseYards : Double
+    var hypotenuseMeters : Double {
+        get {
+            return hypotenuseYards / 1.09361
+        }
+    }
+    var hypotenuseKilometers : Double {
+        get {
+            return hypotenuseYards * 0.0009144
+        }
+    }
+    
+    // The ballistic coefficient for the projectile.
+    var ballisticCoefficient : Double
+    
+    // Intial velocity, in ft/s
+    var muzzleVelocity : Double
+    
+    // The Sight height over bore, in inches.
+    var seightHeight : Double
+    
+    var projectileWeight : Int32
+    
+    // The zero range of the rifle, in yards.
+    var zeroRange : Double
+    
+    var dragFunction : Int32
+    
+    private init()
+    {
+        self.appDeligate = UIApplication.shared.delegate as! AppDelegate
+        self.context = appDeligate.persistentContainer.viewContext
+        self.ballisticsEntityDescription = NSEntityDescription.entity(forEntityName: "BallisticSettings", in: context)
+        self.ballisticsEntity = NSManagedObject(entity: ballisticsEntityDescription!, insertInto: context)
+        
+        self.distanceYards = 200
+        self.hypotenuseYards = 0
+        self.ballisticCoefficient = 0.400
+        self.zeroRange = 25
+        self.dragFunction = 4
+        self.projectileWeight = 150
+        self.seightHeight = 1.5
+        self.muzzleVelocity = 2500
+        
+        self.results = []
+        self.correctedBallisticCoefficient = 0
+        self.riseInElevation = 0
+        self.shotAngle = 0
+        
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "BallisticSettings")
+        request.returnsObjectsAsFaults = false
+        
+        getCoreData(request: request)
+    }
+    
+    func getCoreData(request: NSFetchRequest<NSFetchRequestResult>)
+    {
+        var list : [NSManagedObject] = []
+        do
+        {
+            let result = try context.fetch(request)
+            for data in result as! [NSManagedObject]
+            {
+                list.append(data)
+            }
+        }
+        catch
+        {
+            print("Failed")
+        }
+        
+        if(list.count > 1)
+        {
+            let sorted = list.sorted { (first, second) -> Bool in
+                if first.value(forKey: "date") as! Double > second.value(forKey: "date") as! Double
+                {
+                    return true
+                }
+                return false
+            }
+            
+            // Only keep the most current Data in CoreData
+            let subarray = sorted[1 ... sorted.count - 1]
+            for item in subarray
+            {
+                context.delete(item)
+                appDeligate.saveContext()
+            }
+            ballisticsEntity = sorted[0]
+            appDeligate.saveContext()
+            
+            self.distanceYards = ballisticsEntity.value(forKey: "distanceYards") as! Double
+            self.ballisticCoefficient = ballisticsEntity.value(forKey: "ballisticCoefficient") as! Double
+            self.muzzleVelocity = ballisticsEntity.value(forKey: "muzzleVelocity") as! Double
+            self.seightHeight = ballisticsEntity.value(forKey: "sightHeight") as! Double
+            self.projectileWeight = ballisticsEntity.value(forKey: "projectileWeight") as! Int32
+            self.zeroRange = ballisticsEntity.value(forKey: "zeroRange") as! Double
+        }
+        else if(list.count != 0)
+        {
+            ballisticsEntity = list[0]
+        }
+    }
+    
+    func saveCoreData()
+    {
+        let timestamp = NSDate().timeIntervalSince1970
+        ballisticsEntity.setValue(timestamp, forKey: "date")
+        do
+        {
+            try context.save()
+            print("entity saved" + String(describing: ballisticsEntity))
+        }
+        catch
+        {
+            print("Failed saving")
+        }
+    }
+    
+    func setValue(type: String, variable: String)
+    {
+        switch type
+        {
+        case "TARGET_DISTANCE":
+            self.distanceYards = Double(variable)!
+            self.ballisticsEntity.setValue(self.distanceYards, forKey: "distanceYards")
+        case "ZERO_RANGE":
+            self.zeroRange = Double(variable)!
+            self.ballisticsEntity.setValue(self.zeroRange, forKey: "zeroRange")
+        case "SIGHT_HEIGHT":
+            self.seightHeight = Double(variable)!
+            self.ballisticsEntity.setValue(self.seightHeight, forKey: "sightHeight")
+        case "BALLISTIC_COEFFICIENT":
+            self.ballisticCoefficient = Double(variable)!
+            self.ballisticsEntity.setValue(self.ballisticCoefficient, forKey: "ballisticCoefficient")
+        case "PROJECTILE_WEIGHT":
+            self.projectileWeight = Int32(variable)!
+            self.ballisticsEntity.setValue(self.projectileWeight, forKey: "projectileWeight")
+        case "MUZZLE_VELOCITY":
+            self.muzzleVelocity = Double(variable)!
+            self.ballisticsEntity.setValue(self.muzzleVelocity, forKey: "muzzleVelocity")
+        case "DRAG_FUNCTION":
+            self.dragFunction = Int32(variable)!
+            self.ballisticsEntity.setValue(self.dragFunction, forKey: "dragFunction")
+        default:
+            break
+        }
+        
+        saveCoreData()
+    }
+    
+    var angleCorrection = true
     
     let GRAVITY = -(32.194)
     let _BCOMP_MAXRANGE_ = 50001
@@ -544,44 +724,7 @@ class BallisticCalculator
         }
         return retArray;
     }
-    
-    
-    // Helpers
-    //**************************************************************************
-    
-    var results : [Double] = []
-    
-    var zeroangle : Double = -1
-    var altitude : Double = 0 //measured in feet
-    var opposite : Double = 0
-    var barometer : Double = 29.53 //measured in Hg
-    var temperature : Double = 59 //measured in F
-    var relativeHumidity : Double = 78/100 //measured in %
-    var hypotenuse : Double = 0
-    var distinMeters : Double = 0
-    var distanceYds : Double = 0
-    var projectileWeight : Int = 168
-    
-    var bc : Double = -1// The ballistic coefficient for the projectile.
-    var v : Double = -1// Intial velocity, in ft/s
-    var sh : Double = -1// The Sight height over bore, in inches.
-    var angle : Double = -1// The shooting angle (uphill / downhill), in degrees.
-    var zero : Double = -1// The zero range of the rifle, in yards.
-    var windspeed : Double = -1 // The wind speed in miles per hour.
-    var windangle : Double = -1// The wind angle (0=headwind, 90=right to left, 180=tailwind, 270/-90=left to right)
-    var df : Int = 0
-    var numRows : Int = 0
-    var bearing : Double = 0
-    var pressure : Double = 0
-    var humidity : Double = 0
 
-    var targetheight : Double = 0
-    var shooterheight : Double = 0
-    
-    var windOn = true
-    var environmentOn = true
-    var altitudeOn = true
-    
     //====================================================================
     func get_heading1(lat1: Double,lon1: Double,lat2: Double,lon2: Double)
         -> Double
@@ -607,291 +750,149 @@ class BallisticCalculator
             }
     }
     
-    //====================================================================
-    func setBallistics(shooter: CLLocationCoordinate2D, target: CLLocationCoordinate2D)
+    func calculateWindAngleWithRespectToShot(shotHeadingDegrees: Double, windAngleDegrees: Double) ->Double
     {
-                //self.bc = GlobalSelectionModel.ballisticCoefficient
+        var angle : Double = 0
+        var windAngle = windAngleDegrees
         
-//                if(GlobalSelectionModel.chronograph != 0)
-//                {
-//                    self.v = Double(GlobalSelectionModel.chronograph)
-//                }
-//                else
-//                {
-//                    self.v = Double(GlobalSelectionModel.muzzleVelocity)
-//                }
-                //self.sh = GlobalSelectionModel.sightHeight
-                //self.zero = Double(GlobalSelectionModel.zeroRange)
-        
-                //df is drag Function G1 - G8
-                
-                self.df = 4//GlobalSelectionModel.DragFunc
-                
-                
-                //Set the Windage Factors
-                if(windOn)
-                {
-                    var wAngle: Double = 0
-                    var angle: Double = 0
-                    windspeed = Double(WeatherData.GlobalData.windspeed)!
-                    wAngle = Double(WeatherData.GlobalData.direction)!
-                    
-                    
-                    let shotHeading = get_heading1(lat1: shooter.latitude, lon1: shooter.longitude, lat2: target.latitude, lon2: target.longitude)
-                    
-                    if(shotHeading > 180)
-                    {
-                        angle = 360 - shotHeading
-                        windangle = (wAngle - 180) + angle
-                    }
-                    else
-                    {
-                        angle = 180 - shotHeading
-                        windangle = (wAngle - 360) + angle
-                    }
-                    if(windangle < 0)
-                    {
-                        windangle = windangle + 360
-                    }
-                    
-                }
-                else
-                {//Use Standard Temperature Pressure
-                    windspeed = 0
-                    windangle = 0
-                }
-                
-                //Set the Environmental Factors
-                if(environmentOn)
-                {
-                    altitude = Double(WeatherData.GlobalData.altitude)! //measured in feet
-                    if(WeatherData.GlobalData.pressure != "NaN")
-                    {
-                        barometer = Double(WeatherData.GlobalData.pressure)! //measured in Hg
-                    }
-                    else
-                    {
-                        barometer = 29.53 //measured in Hg
-                    }
-                    if(WeatherData.GlobalData.temperatureF != "NaN")
-                    {
-                        temperature = Double(WeatherData.GlobalData.temperatureF)! //measured in F
-                    }
-                    else
-                    {
-                        temperature = 59 //measured in F
-                    }
-                    if(WeatherData.GlobalData.humidity != "NaN")
-                    {
-                        relativeHumidity = (Double(WeatherData.GlobalData.humidity)!/100) //measured in %
-                    }
-                    else
-                    {
-                        relativeHumidity = 78/100 //measured in %
-                    }
-                }
-                else
-                {
-                    altitude = 0 //measured in feet
-                    barometer = 29.53 //measured in Hg
-                    temperature = 59 //measured in F
-                    relativeHumidity = 78/100 //measured in %
-                }
-                
-                
-                bc = AtmCorrect(DragCoefficient: bc, Altitude: altitude,
-                                                Barometer: barometer,
-                                                Temperature: temperature,
-                                                RelativeHumidity: relativeHumidity)
-                
-                
-                // Find the zero angle of the bore relative to the sighting system.
-                zeroangle = ZeroAngle(DragFunction: df, DragCoefficient: bc,
-                                                      Vi: v, SightHeight: sh,
-                                                      ZeroRange: zero,
-                                                      yIntercept: 0)
-
-                if(distanceYds > 0 && bc != -1 && v != -1 && sh != -1)
-                {
-                    if(altitudeOn)
-                    {
-                        
-                        // shootingAngle.text = String(format: "%.0f", angle) + "\u{00B0}"
-                        
-                        self.results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
-                                                                                ShootingAngle: angle, ZAngle: zeroangle, WindSpeed: windspeed, WindAngle: windangle,
-                                                                                Start: Int(distanceYds), Stop: Int(distanceYds))
-                        
-                        //  MoA.text = String(format: "%.2lf \u{2195}", GlobalSelectionModel.Results[2])
-                        // WMoA.text = String(format: "%.2lf \u{2194}", GlobalSelectionModel.Results[5])
-                        
-                        
-                    }
-                    else
-                    {
-                        //shootingAngle.text = "0.0" + "\u{00B0}"
-                        
-                        // Generate a solution using the GNU Ballistics library call.
-                        self.results = SolveAll(DragFunction: df, DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: projectileWeight,
-                                                                                ShootingAngle: 0, ZAngle: zeroangle, WindSpeed: windspeed, WindAngle: windangle,
-                                                                                Start: Int(distanceYds), Stop: Int(distanceYds))
-                        
-                        //MoA.text = String(format: "%.2lf \u{2195}", GlobalSelectionModel.Results[2])
-                        //WMoA.text = String(format: "%.2lf \u{2194}", GlobalSelectionModel.Results[5])
-                    }
-
-                }
-    }
-    
-    func resetDistance()
-    {
-        if(GlobalSelectionModel.imperial)
+        if(shotHeadingDegrees > 180)
         {
-            distanceYds = (Double(distinMeters) * 1.09361)
+            angle = 360 - shotHeadingDegrees
+            windAngle = (windAngle - 180) + angle
         }
         else
         {
-            distanceYds = (Double(distinMeters) * 1.09361)
+            angle = 180 - shotHeadingDegrees
+            windAngle = (windAngle - 360) + angle
         }
-        if(altitudeOn)
+        if(windAngle < 0)
         {
-            angleset()
-        }
-    }
-    
-    func angleset()
-    {
-        if(altitudeOn)
-        {
-            shooterheight = Double(WeatherData.GlobalData.altitude)!
-            if(targetheight > shooterheight){
-                opposite = (targetheight - shooterheight)
-                
-                hypotenuse = sqrt(pow((Double(distinMeters) * 1.09361),2) + pow(opposite,2))
-                
-                if(hypotenuse > (Double(distinMeters) * 1.09361))
-                {
-                    
-                    distanceYds = hypotenuse
-                    angle = asin(opposite/distanceYds)
-                    angle = RadtoDeg(rad: angle)
-                    if(GlobalSelectionModel.imperial)
-                    {
-                        // distance.text = String(format: "%.2lf ",(hypotenuse) + distanceOffset) + " yds^"
-                    }
-                    else
-                    {
-                        //distance.text = String(format: "%.2lf ",(hypotenuse * 0.9144) + distanceOffset) + " m^"
-                    }
-                }
-                else
-                {
-                    
-                    distanceYds = (Double(distinMeters) * 1.09361)
-                    angle = atan(opposite/distanceYds)
-                    angle = RadtoDeg(rad: angle)
-                    if(GlobalSelectionModel.imperial){
-                        //distance.text = String(format: "%.2lf ",(Double(distinMeters) * 1.09361) + distanceOffset) + " yds"
-                    }
-                    else
-                    {
-                        //distance.text = String(format: "%.2lf ",(Double(distinMeters)) + distanceOffset) + " m"
-                    }
-                }
-            }
-            else
-            {
-                opposite = (shooterheight - targetheight)
-                
-                hypotenuse = sqrt(pow((Double(distinMeters) * 1.09361),2) + pow(opposite,2))
-                
-                if(hypotenuse > (Double(distinMeters) * 1.09361))
-                {
-                    
-                    distanceYds = hypotenuse
-                    angle = -(asin(opposite/distanceYds))
-                    angle = RadtoDeg(rad: angle)
-                    if(GlobalSelectionModel.imperial)
-                    {
-                        //distance.text = String(format: "%.2lf ",(hypotenuse) + distanceOffset) + " yds^"
-                    }
-                    else
-                    {
-                        //distance.text = String(format: "%.2lf ",(hypotenuse * 0.9144) + distanceOffset) + " m^"
-                    }
-                }
-                else
-                {
-                    
-                    distanceYds = (Double(distinMeters) * 1.09361)
-                    angle = -(atan(opposite/distanceYds))
-                    angle = RadtoDeg(rad: angle)
-                    if(GlobalSelectionModel.imperial)
-                    {
-                        //distance.text = String(format: "%.2lf ",(Double(distinMeters) * 1.09361) + distanceOffset) + " yds"
-                    }
-                    else
-                    {
-                        //distance.text = String(format: "%.2lf ",(Double(distinMeters)) + distanceOffset) + " m"
-                    }
-                }
-            }
-        }
-    }
-    
-    func saveCoreData()
-    {
-        let timestamp = NSDate().timeIntervalSince1970
-        ballisticsEntity.setValue(timestamp, forKey: "date")
-        do
-        {
-        try context.save()
-            print("entity saved" + String(describing: ballisticsEntity))
-        }
-        catch
-        {
-        print("Failed saving")
-        }
-    }
-    
-    func setValue(type: String, variable: String)
-    {
-        switch type
-        {
-        case "USER_BEARING":
-            self.bearing = Double(variable)!
-        case "TARGET_DISTANCE":
-            self.distanceYds = Double(variable)!
-            self.distinMeters = distanceYds / 1.09361
-            ballisticsEntity.setValue(self.distanceYds, forKey: "distanceYds")
-        case "ZERO_RANGE":
-            self.zero = Double(variable)!
-            ballisticsEntity.setValue(self.zero, forKey: "zeroRange")
-        case "SIGHT_HEIGHT":
-            self.sh = Double(variable)!
-            ballisticsEntity.setValue(self.sh, forKey: "sightHeight")
-        case "BALLISTIC_COEFFICIENT":
-            self.bc = Double(variable)!
-            ballisticsEntity.setValue(self.bc, forKey: "ballisticCoefficient")
-        case "PROJECTILE_WEIGHT":
-            self.projectileWeight = Int(variable)!
-            ballisticsEntity.setValue(self.projectileWeight, forKey: "weight")
-        case "MUZZLE_VELOCITY":
-            self.v = Double(variable)!
-            ballisticsEntity.setValue(self.v, forKey: "muzzleVelocity")
-        case "OUTSIDE_TEMPERATURE":
-            self.temperature = Double(variable)!
-        case "WIND_SPEED":
-            self.windspeed = Double(variable)!
-        case "WIND_DIRECTION":
-            self.windangle = Double(variable)!
-        case "ALTITUDE":
-            self.altitude = Double(variable)!
-        default:
-            break
+            windAngle = windAngle + 360
         }
         
-        saveCoreData()
+        return windAngleDegrees
+    }
+    
+    //====================================================================
+    func setBallistics(shooter: CLLocationCoordinate2D, target: TargetPin, heading: Double)
+    {
+        let weatherData = WeatherData.sharedInstance
+        
+        var bc = ballisticCoefficient
+        let sh = seightHeight
+        let zero = zeroRange
+        let df = dragFunction
+        var distanceYds = distanceYards
+        let v = muzzleVelocity
+        let pw = projectileWeight
+        
+        //default values
+        var windSpeed = 0.0
+        var windAngle = 0.0
+        var barometer = 29.53
+        var temperature = 59.0
+        var relativeHumidity = Double(78/100)
+        var altitude = 0.0
+        
+        var shotAngle = 0.0
+        var shotHeading = heading
+        
+        if(environmentOn)
+        {
+            windSpeed = weatherData.windSpeed
+            windAngle = weatherData.windDirection
+            barometer = weatherData.pressure
+            temperature = weatherData.temperatureF
+            relativeHumidity = weatherData.humidity
+            altitude = weatherData.altitude
+        }
+
+        if(heading == -1)
+        {
+            //Set the Windage Factors
+            shotHeading = get_heading1(lat1: shooter.latitude, lon1: shooter.longitude, lat2: target.coordinate.latitude, lon2: target.coordinate.longitude)
+        }
+        
+        windAngle = calculateWindAngleWithRespectToShot(shotHeadingDegrees: shotHeading, windAngleDegrees: windAngle)
+
+        // Perform ballistic Coefficient Atmospheric Correction
+        bc = AtmCorrect(DragCoefficient: bc, Altitude: altitude,
+                                        Barometer: barometer,
+                                        Temperature: temperature,
+                                        RelativeHumidity: relativeHumidity)
+        correctedBallisticCoefficient = bc
+
+        // Find the zero angle of the bore relative to the sighting system.
+        var zeroAngle = ZeroAngle(DragFunction: Int(df), DragCoefficient: bc,
+                                              Vi: v, SightHeight: sh,
+                                              ZeroRange: zero,
+                                              yIntercept: 0)
+
+        if(heading == -1)
+        {
+            shotAngle = setShotAngle(shooterHeight: altitude, targetHeight: target.altitudeFt, shotDistance: distanceYds)
+        }
+        
+        if(distanceYds > 0 && bc != -1 && v != -1 && sh != -1)
+        {
+            self.results = SolveAll(DragFunction: Int(df), DragCoefficient: bc, Vi: v, SightHeight: sh, projectileWeight: Int(pw), ShootingAngle: shotAngle, ZAngle: zeroAngle, WindSpeed: windSpeed, WindAngle: windAngle, Start: Int(distanceYds), Stop: Int(distanceYds))
+        }
+    }
+    
+    // Set shot angle based on elevations of target and shooter
+    func setShotAngle(shooterHeight: Double, targetHeight: Double, shotDistance: Double) -> Double
+    {
+        var shotAngle : Double = 0
+        var distance = shotDistance
+        var opposite : Double = 0
+        var hypotenuse : Double = 0
+        
+        if(angleCorrection)
+        {
+            // Shooting Downhill
+            if(targetHeight > shooterHeight){
+                opposite = (targetHeight - shooterHeight)
+                
+                hypotenuse = sqrt(pow(shotDistance,2) + pow(opposite,2))
+                
+                if(hypotenuse > shotDistance)
+                {
+                    distance = hypotenuse
+                    shotAngle = asin(opposite/distance)
+                    shotAngle = RadtoDeg(rad: shotAngle)
+                }
+                else
+                {
+                    shotAngle = atan(opposite/distance)
+                    shotAngle = RadtoDeg(rad: shotAngle)
+                }
+            }
+                // Shooting Uphill
+            else
+            {
+                opposite = (shooterHeight - targetHeight)
+                
+                hypotenuse = sqrt(pow(distance,2) + pow(opposite,2))
+                
+                if(hypotenuse > distance)
+                {
+                    distance = hypotenuse
+                    shotAngle = -(asin(opposite/distance))
+                    shotAngle = RadtoDeg(rad: shotAngle)
+                }
+                else
+                {
+                    shotAngle = -(atan(opposite/distance))
+                    shotAngle = RadtoDeg(rad: shotAngle)
+                }
+            }
+        }
+        hypotenuseYards = distance
+        
+        self.shotAngle = shotAngle
+        self.riseInElevation = opposite
+        
+        return shotAngle
     }
 }
 
