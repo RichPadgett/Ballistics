@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "mountain30x30w.png",
+      "filename" : "wind30x30.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "mountain60x60w.png",
+      "filename" : "wind60x60.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "mountain75x75w.png",
+      "filename" : "wind75x75.png",
       "scale" : "3x"
     }
   ],

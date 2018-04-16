@@ -265,10 +265,10 @@ class TargetPin: NSObject, MKAnnotation
                 let str = (String(describing: json["main"]!["temp"]!!))
                 let kelvin = Double(str)
                 let rankin = kelvin! * 9/5
-                let celcius = rankin * 9/5 - 273.15
+              //  let celcius = rankin * 9/5 - 273.15
                 let farenheit = rankin - 459.67
                 let far = String(format:"%.2f",farenheit)
-                let cel = String(format:"%.2f",celcius)
+              //  let cel = String(format:"%.2f",celcius)
                 self.temperatureFarenheit = Double(far)!
             }
             else

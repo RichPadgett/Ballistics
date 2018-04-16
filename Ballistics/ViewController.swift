@@ -10,8 +10,31 @@ import UIKit
 import MapKit
 import Speech
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate, SFSpeechRecognizerDelegate
 {
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    
+    
+    
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    
+    
+    
+    private var recognitionTask: SFSpeechRecognitionTask?
+    
+    
+    
+    private let audioEngine = AVAudioEngine()
+    
+    
+    
+    //@IBOutlet var textView : UITextView!
+    
+    
+    
+ //   @IBOutlet var recordButton : UIButton!
+    
+    private static var recognitionReset = Timer()
     
     // Variables
     private var locationManager = CLLocationManager()
@@ -25,10 +48,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     private var trueNorth : Double = 0
     private var zoom : Double = 1000
     
+    @IBOutlet weak var recordingImage: UIImageView!
+    
     var microphoneOn = false
     var lockBearing : Bool = false
     var centerMap : Bool = true
     var menuIsVisible: Bool = false
+    var windOn: Bool = true
     
     var ballisticCalculator = BallisticCalculator.sharedInstance
     var weatherData = WeatherData.sharedInstance
@@ -46,6 +72,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var compassButton: UIBarButtonItem!
     @IBOutlet weak var environmentButton: UIBarButtonItem!
     
+
+    @IBOutlet weak var recordingLabel: UILabel!
+    
+    @IBOutlet weak var recordedLabel: UILabel!
+    
+    @IBOutlet weak var windButton: UIBarButtonItem!
     
     // TextField Outlets
     @IBOutlet weak var targetBearingTextField: UITextField!
@@ -89,11 +121,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         navigationCenterItem.title = " ∆ "
         
-        centerMapOnLocation(location: locationManager.location!)
+        //centerMapOnLocation(location: locationManager.location!)
         getWeatherForCoordinate()
         
         getElevationForCoordinate()
+        
+        microphoneButton.isEnabled = false
+        
+
     }
+    
+    override public func viewDidAppear(_ animated: Bool) {
+        recordedLabel.text = ""
+        speechRecognizer.delegate = self
+        
+        requestAuth()
+    }
+
     
     func mapView(_ mapview: MKMapView, regionWillChangeAnimated: Bool)
     {
@@ -342,6 +386,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // Target Button Function
     func dropTargetUsingData()
     {
+        getElevationForCoordinate()
         if targetDistanceTextField.text != ""
         {
             ballisticCalculator.distanceYards = Double(targetDistanceTextField.text!)!
@@ -405,22 +450,241 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }
     }
     
+    func turnOnOffWind()
+    {
+        self.windOn = !self.windOn
+        ballisticCalculator.windOn = !ballisticCalculator.windOn
+        windOnOffAlert(self)
+        
+    }
+    
     // Altitude Button Function
-    func useDontUseAltitude()
+    func useDontUseAngles()
     {
         ballisticCalculator.angleCorrection = !ballisticCalculator.angleCorrection
-        altitudeAlert(self)
+        angleAlert(self)
+    }
+    
+    
+    static var commandHeard : Bool = false
+    static var indexOfCommand : Int = -1
+    private func startRecording()  throws {
+        
+        // Cancel the previous task if it's running.
+        if let recognitionTask = recognitionTask {
+            
+            recognitionTask.cancel()
+            
+            self.recognitionTask = nil
+            
+        }
+
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setCategory(AVAudioSessionCategoryRecord)
+        try audioSession.setMode(AVAudioSessionModeMeasurement)
+        try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+
+        let inputNode = audioEngine.inputNode
+        //else { fatalError("Audio engine has no input node") }
+        
+        guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+ 
+        // Configure request so that results are returned before audio recording is finished
+        
+        recognitionRequest.shouldReportPartialResults = true
+        
+        // A recognition task represents a speech recognition session.
+        
+        // We keep a reference to the task so that it can be cancelled.
+       
+        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
+            
+            var isFinal = false
+
+            if let result = result
+            {
+                let bestString = result.bestTranscription.formattedString
+                
+                let newStringArray = result.bestTranscription.segments
+                print(bestString)
+                
+                
+                
+                if(!ViewController.commandHeard)
+                {
+                    var lastString = ""
+                    
+                    lastString = newStringArray[newStringArray.count - 1].substring
+                    ViewController.indexOfCommand = newStringArray.count
+                    self.checkForCommandStart(resultString: lastString)
+                    
+                }
+                else
+                {
+                    print("countVVV")
+                    print(newStringArray.count - ViewController.indexOfCommand)
+                    if(newStringArray.count - ViewController.indexOfCommand == 3 || newStringArray.count - ViewController.indexOfCommand == 4)
+                    {
+                        if(self.checkForCommand(result: newStringArray))
+                        {
+                            self.recognitionTask?.finish()
+                        }
+                    }
+                    else if(newStringArray.count - ViewController.indexOfCommand > 4)
+                    {
+                        print("resetting")
+                        ViewController.commandHeard = false
+                        self.recordedLabel.text = ""
+                    }
+                }
+                
+               
+
+
+                isFinal = result.isFinal
+            }
+            
+            
+
+            if error != nil || isFinal
+            {
+                print("-----STOPPING------")
+                self.audioEngine.stop()
+                
+        
+               
+                self.recordingImage.image = UIImage(named: "")
+                self.recordingLabel.text = ""
+                
+                inputNode.removeTap(onBus: 0)
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+               self.microphoneButton.isEnabled = true
+            }
+        }
+
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            
+            self.recognitionRequest?.append(buffer)
+        }
+
+        audioEngine.prepare()
+
+        try audioEngine.start()
+        
+        recordingImage.image = UIImage(named: "rec.png")
+        
+        recordingLabel.text = "Rec"
+        
+    }
+    
+    
+    func checkForCommandStart(resultString: String)
+    {
+        
+        switch resultString
+        {
+        case "set", "Set", "send", "Send", "sit", "Sit", "sat", "Sat", "said", "Said":
+            //self.recordedLabel.text = resultString
+            ViewController.commandHeard = true
+        default:
+            break
+        }
+    }
+    
+    func checkForCommand(result: [SFTranscriptionSegment]) -> Bool
+    {
+        if(ViewController.commandHeard)
+        {
+            if(result[0].substring == "set" || result[0].substring == "Set" || result[0].substring == "send" || result[0].substring == "Send" || result[0].substring == "Sit" || result[0].substring == "sit" || result[0].substring == "Sat" || result[0].substring == "sat" || result[0].substring == "said" || result[0].substring == "Said")
+            {
+                if(result[1].substring == "distance" || result[1].substring == "Distance")
+                {
+                    if(result[2].substring == "to" || result[2].substring == "To" || result[2].substring == "two" || result[2].substring == "Two")
+                    {
+                        if let num = Double(result[3].substring)
+                        {
+                            print(num)
+                            self.targetDistanceTextField.text = result[3].substring
+                            self.ballisticCalculator.distanceYards = num
+                            dropTargetUsingData()
+                            ViewController.indexOfCommand = -1
+                            ViewController.commandHeard = false
+                            
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+    
+  
+    public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
+        
+        if available
+        {
+            microphoneButton.isEnabled = true
+        }
+        else
+        {
+            microphoneButton.isEnabled = false
+        }
     }
     
     // Microphone Button Function
-    func turnOnOffMicrophone()
+    func turnOnOffMicrophone(screenTap: Bool)
     {
-        self.microphoneOn = !microphoneOn
-        microphoneAlert(self)
-        
-        if(microphoneOn)
+        if(!screenTap)
         {
-          //speech
+            self.microphoneOn = !microphoneOn
+            microphoneAlert(self)
+        }
+
+        if audioEngine.isRunning
+        {
+            audioEngine.stop()
+            recognitionRequest?.endAudio()
+            microphoneButton.isEnabled = false
+            recordingImage.image = UIImage(named: "")
+            recordingLabel.text = ""
+        }
+        else
+        {
+            ViewController.indexOfCommand = -1
+            try! startRecording()
+        }
+    }
+    
+    func requestAuth()
+    {
+        SFSpeechRecognizer.requestAuthorization { authStatus in
+            /* The callback may not be called on the main thread. Add an
+             operation to the main queue to update the record button's state.
+             */
+            OperationQueue.main.addOperation {
+                switch authStatus {
+                case .authorized:
+                    self.microphoneButton.isEnabled = true
+                    //self.recordButton.isEnabled = true
+                case .denied:
+                    self.microphoneButton.isEnabled = false
+                    //self.recordButton.setTitle("User denied access to speech recognition", for: .disabled)
+                case .restricted:
+                    self.microphoneButton.isEnabled = false
+
+                    //self.recordButton.setTitle("Speech recognition restricted on this device", for: .disabled)
+                case .notDetermined:
+                    self.microphoneButton.isEnabled = false
+
+//                    self.recordButton.setTitle("Speech recognition not yet authorized", for: .disabled)
+                }
+            }
         }
     }
     
@@ -462,9 +726,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             case "SetBearing":
                 lockUnlockBearing()
             case "SetAltitude":
-                useDontUseAltitude()
+                useDontUseAngles()
             case "SetMicrophone":
-                turnOnOffMicrophone()
+                turnOnOffMicrophone(screenTap: false)
+                // 5 second delay until new pin drop available
+            case "SetWind":
+                turnOnOffWind()
             default:
                 break
             }
@@ -537,6 +804,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             //Pin Drop Skipped for 5 seconds
         }
     }
+ 
+    
+    
 
     // Did Select Annotation
     // *************************************************************************
@@ -693,9 +963,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     {
         
         #if (arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
-            getElevationForCoordinate()
             setWindSock()
-            sinkTextFieldVariables()
+            //sinkTextFieldVariables()
         #else
             weatherData.altitude = ((locationManager.location?.altitude)! * 1.09361) * 3
             altitudeTextField.text = String(describing: (((locationManager.location?.altitude)! * 1.09361) * 3))
@@ -705,7 +974,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
         }
         // draw polyline from shooter to target
-        drawShotLine(location: locations[0])
+        //drawShotLine(location: locations[0])
     }
     
     // Render OverLays

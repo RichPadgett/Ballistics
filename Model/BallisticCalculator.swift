@@ -15,6 +15,7 @@ class BallisticCalculator
 {
     static let sharedInstance = BallisticCalculator()
     
+    var windOn : Bool = true
     var environmentOn : Bool = true
     var altitudeOn : Bool = true
     
@@ -81,7 +82,7 @@ class BallisticCalculator
         self.hypotenuseYards = 0
         self.ballisticCoefficient = 0.400
         self.zeroRange = 25
-        self.dragFunction = 4
+        self.dragFunction = 7
         self.projectileWeight = 150
         self.seightHeight = 1.5
         self.muzzleVelocity = 2500
@@ -797,10 +798,14 @@ class BallisticCalculator
         var shotAngle = 0.0
         var shotHeading = heading
         
-        if(environmentOn)
+        if(windOn)
         {
             windSpeed = weatherData.windSpeed
             windAngle = weatherData.windDirection
+        }
+        
+        if(environmentOn)
+        {
             barometer = weatherData.pressure
             temperature = weatherData.temperatureF
             relativeHumidity = weatherData.humidity

@@ -29,22 +29,22 @@ func alertEnterDistance(_ sender: ViewController)
 }
 
 // Distance Missing Alert
-func altitudeAlert(_ sender: ViewController)
+func angleAlert(_ sender: ViewController)
 {
     let ballisticCalculator = BallisticCalculator.sharedInstance
     var altitudeDesc : String
     if(ballisticCalculator.angleCorrection)
     {
         altitudeDesc = "On"
-        sender.altitudeButton.tintColor = sender.view.tintColor
+       // sender.altitudeButton.tintColor = sender.view.tintColor
     }
     else
     {
         altitudeDesc = "Off"
-        sender.altitudeButton.tintColor = UIColor.red
+       // sender.altitudeButton.tintColor = UIColor.red
         
     }
-    let alert = UIAlertController(title: "Altitude On/Off", message: "Altitude is set to " + altitudeDesc , preferredStyle: .alert)
+    let alert = UIAlertController(title: "", message: "Angle Correction " + altitudeDesc , preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
@@ -58,15 +58,35 @@ func environmentAlert(_ sender: ViewController)
     var environmentDesc : String
     if(ballisticCalculator.environmentOn)
     {
-        environmentDesc = "On"
-        sender.environmentButton.tintColor = sender.view.tintColor
+        environmentDesc = "Off"
+       // sender.environmentButton.tintColor = sender.view.tintColor
     }
     else
     {
-        environmentDesc = "Off"
-        sender.environmentButton.tintColor = UIColor.red
+        environmentDesc = "On"
+       // sender.environmentButton.tintColor = UIColor.red
     }
-    let alert = UIAlertController(title: "Environment On/Off", message: "Environment is set to " + environmentDesc , preferredStyle: .alert)
+    let alert = UIAlertController(title: "", message: "Environment " + environmentDesc , preferredStyle: .alert)
+    
+    alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+    
+    sender.present(alert, animated: true)
+}
+
+func windOnOffAlert(_ sender: ViewController)
+{
+    var windDesc : String
+    if(sender.windOn)
+    {
+        windDesc = "On"
+       // sender.windButton.tintColor = sender.view.tintColor
+    }
+    else
+    {
+        windDesc = "Off"
+       // sender.windButton.tintColor = UIColor.red
+    }
+    let alert = UIAlertController(title: "", message: "Wind " + windDesc, preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
@@ -79,15 +99,15 @@ func bearingLockedAlert(_ sender: ViewController)
     var bearingDesc : String
     if(sender.lockBearing)
     {
-        bearingDesc = "Unlocked"
-        sender.compassButton.tintColor = sender.view.tintColor
+        bearingDesc = "Locked"
+       // sender.compassButton.tintColor = UIColor.red
     }
     else
     {
-        bearingDesc = "Locked"
-        sender.compassButton.tintColor = UIColor.red
+        bearingDesc = "Unlocked"
+        //sender.compassButton.tintColor = sender.view.tintColor
     }
-    let alert = UIAlertController(title: "Bearing Locked/Unlocked", message: "Bearing is set to " + bearingDesc , preferredStyle: .alert)
+    let alert = UIAlertController(title: "", message: "Bearing " + bearingDesc , preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
@@ -101,14 +121,15 @@ func microphoneAlert(_ sender: ViewController)
     if(sender.microphoneOn)
     {
         microphoneDesc = "On"
-        sender.microphoneButton.tintColor = sender.view.tintColor
+       // sender.microphoneButton.tintColor = UIColor.red
     }
     else
     {
         microphoneDesc = "Off"
-        sender.microphoneButton.tintColor = UIColor.red
+       // sender.microphoneButton.tintColor = sender.view.tintColor
     }
-    let alert = UIAlertController(title: "Turn On/Off Microphone", message: "Microphone is set to " + microphoneDesc , preferredStyle: .alert)
+    let alert = UIAlertController(title: "Microphone " + microphoneDesc, message: "Do not leave microphone on while not in use.\n" +
+            "Tap the map to toggle microphone without alerts.", preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
