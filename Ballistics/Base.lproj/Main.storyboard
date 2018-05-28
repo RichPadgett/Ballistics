@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Bvy-bT-K2J">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Bvy-bT-K2J">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -79,7 +79,7 @@
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Temp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NHE-ge-CMf">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Temp F" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NHE-ge-CMf">
                                         <rect key="frame" x="0.0" y="328.5" width="51" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
@@ -314,20 +314,6 @@
                                 <color key="textColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gH6-C7-s8V">
-                                <rect key="frame" x="0.0" y="575" width="5.5" height="30"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q4V-tQ-ise">
-                                <rect key="frame" x="0.0" y="545" width="5.5" height="30"/>
-                                <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <color key="textColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mtM-hb-gRV">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <constraints>
@@ -365,33 +351,21 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1i6-RT-R9z">
-                                <rect key="frame" x="5.5" y="575" width="30" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="FnU-A6-xVf"/>
-                                    <constraint firstAttribute="width" constant="30" id="hC0-Yp-bbL"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.26051741839999998" green="0.2605243921" blue="0.260520637" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="gH6-C7-s8V" firstAttribute="leading" secondItem="1OK-wR-MQd" secondAttribute="leading" id="1jU-fF-jTl"/>
-                            <constraint firstItem="Q4V-tQ-ise" firstAttribute="leading" secondItem="1OK-wR-MQd" secondAttribute="leading" id="2yJ-Ox-BUV"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="3Wh-9b-iMy"/>
                             <constraint firstAttribute="trailing" secondItem="1OK-wR-MQd" secondAttribute="trailing" id="8dX-Gr-VKG"/>
                             <constraint firstItem="1OK-wR-MQd" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="8ic-fl-5W7"/>
                             <constraint firstItem="1OK-wR-MQd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="ChJ-iI-ymi"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="CiJ-ab-Ok6"/>
-                            <constraint firstItem="1i6-RT-R9z" firstAttribute="leading" secondItem="gH6-C7-s8V" secondAttribute="trailing" id="Fhh-zh-9zU"/>
                             <constraint firstItem="SAE-vc-jUU" firstAttribute="centerY" secondItem="e8G-A5-RT9" secondAttribute="centerY" id="Iha-2e-6HV"/>
-                            <constraint firstItem="mtM-hb-gRV" firstAttribute="top" secondItem="1i6-RT-R9z" secondAttribute="bottom" constant="18" id="JLm-Ur-SSQ"/>
                             <constraint firstItem="SAE-vc-jUU" firstAttribute="leading" secondItem="e8G-A5-RT9" secondAttribute="trailing" constant="2" id="OeA-Mv-6gR"/>
                             <constraint firstItem="jU7-yg-46x" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="PZA-lg-M4I"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="top" secondItem="OLG-vg-Gof" secondAttribute="bottom" constant="18" id="QgI-C1-Ed0"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Rvo-ne-DgW"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="bottom" secondItem="qj8-lh-q9Q" secondAttribute="bottom" id="TSp-AN-lbr"/>
-                            <constraint firstItem="mtM-hb-gRV" firstAttribute="top" secondItem="gH6-C7-s8V" secondAttribute="bottom" constant="18" id="Z8Q-Jq-9yQ"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="top" secondItem="qj8-lh-q9Q" secondAttribute="top" id="bIj-my-LU1"/>
                             <constraint firstItem="mtM-hb-gRV" firstAttribute="trailing" secondItem="1OK-wR-MQd" secondAttribute="trailing" id="bTp-26-ls6"/>
                             <constraint firstItem="e8G-A5-RT9" firstAttribute="leading" secondItem="qj8-lh-q9Q" secondAttribute="leading" id="dlU-S8-qqF"/>
@@ -401,7 +375,6 @@
                             <constraint firstItem="SAE-vc-jUU" firstAttribute="trailing" secondItem="qj8-lh-q9Q" secondAttribute="trailing" id="kc8-vo-bce"/>
                             <constraint firstItem="qzt-rM-Z6w" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="2" id="nuf-Ma-4IE"/>
                             <constraint firstItem="1OK-wR-MQd" firstAttribute="bottom" secondItem="mtM-hb-gRV" secondAttribute="top" id="oi6-4G-p9d"/>
-                            <constraint firstItem="gH6-C7-s8V" firstAttribute="top" secondItem="Q4V-tQ-ise" secondAttribute="bottom" id="p6Y-An-sZS"/>
                             <constraint firstItem="OLG-vg-Gof" firstAttribute="leading" secondItem="jU7-yg-46x" secondAttribute="leading" id="sZo-Jw-WpB"/>
                             <constraint firstItem="jU7-yg-46x" firstAttribute="bottom" secondItem="OLG-vg-Gof" secondAttribute="top" id="ybj-kp-HFj"/>
                         </constraints>
@@ -414,18 +387,11 @@
                                 <action selector="menuButtonAction:" destination="BYZ-38-t0r" id="zB5-L4-eqT"/>
                             </connections>
                         </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="trash" id="i9U-ay-UGT">
-                                <connections>
-                                    <action selector="removePinsAction:" destination="BYZ-38-t0r" id="dyj-tg-yoP"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="SetMicrophone" image="Mic" id="U4W-7z-ruR">
-                                <connections>
-                                    <action selector="barButtonAction:" destination="BYZ-38-t0r" id="c7T-cD-6OM"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="i9U-ay-UGT">
+                            <connections>
+                                <action selector="removePinsAction:" destination="BYZ-38-t0r" id="dyj-tg-yoP"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="altitudeButton" destination="P4Z-ub-atm" id="V2f-o3-ghy"/>
@@ -438,14 +404,10 @@
                         <outlet property="labelWMOA" destination="OLG-vg-Gof" id="tIn-W2-Ttg"/>
                         <outlet property="leadingC" destination="ChJ-iI-ymi" id="bVs-M1-b0Z"/>
                         <outlet property="mapView" destination="1OK-wR-MQd" id="Zaf-ba-gO4"/>
-                        <outlet property="microphoneButton" destination="U4W-7z-ruR" id="cpU-Oi-jaT"/>
                         <outlet property="moasLeadingC" destination="sZo-Jw-WpB" id="t9P-9S-HI2"/>
                         <outlet property="muzzleVelocityTextField" destination="gPC-7v-WFe" id="eaE-Y2-oAD"/>
                         <outlet property="navigationCenterItem" destination="RKZ-8i-VGG" id="LS7-bM-cM8"/>
                         <outlet property="pressureTextField" destination="HZa-2O-1oI" id="KmZ-Pr-CH7"/>
-                        <outlet property="recordedLabel" destination="Q4V-tQ-ise" id="ety-d8-Jad"/>
-                        <outlet property="recordingImage" destination="1i6-RT-R9z" id="f88-Gp-Hod"/>
-                        <outlet property="recordingLabel" destination="gH6-C7-s8V" id="wlA-nZ-o2i"/>
                         <outlet property="sightHeightTextField" destination="3lN-HY-uwU" id="o6R-Kd-SRK"/>
                         <outlet property="stackViewTopC" destination="CiJ-ab-Ok6" id="Shq-Lb-SSD"/>
                         <outlet property="targetBearingTextField" destination="Tss-aO-P4a" id="tjr-aE-vXH"/>
@@ -499,7 +461,6 @@
     <resources>
         <image name="Environment" width="30" height="30"/>
         <image name="Menu" width="30" height="30"/>
-        <image name="Mic" width="30" height="30"/>
         <image name="Mountain" width="30" height="30"/>
         <image name="Wind" width="30" height="30"/>
         <image name="ballistics" width="30" height="30"/>

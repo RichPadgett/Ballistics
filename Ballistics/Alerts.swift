@@ -14,7 +14,7 @@ import UIKit
 // Distance Missing Alert
 func alertEnterDistance(_ sender: ViewController)
 {
-    let alert = UIAlertController(title: "Distance Setting", message: "Enter a number for distance in menu.", preferredStyle: .alert)
+    let alert = UIAlertController(title: "Distance Setting", message: "Enter a number for distance in menu.\n Ensure ballistic settings are set in menu.", preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler:
         {
@@ -44,7 +44,7 @@ func angleAlert(_ sender: ViewController)
        // sender.altitudeButton.tintColor = UIColor.red
         
     }
-    let alert = UIAlertController(title: "", message: "Angle Correction " + altitudeDesc , preferredStyle: .alert)
+    let alert = UIAlertController(title: "", message: "Shot Angle Compensation " + altitudeDesc , preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
@@ -66,7 +66,7 @@ func environmentAlert(_ sender: ViewController)
         environmentDesc = "On"
        // sender.environmentButton.tintColor = UIColor.red
     }
-    let alert = UIAlertController(title: "", message: "Environment " + environmentDesc , preferredStyle: .alert)
+    let alert = UIAlertController(title: "", message: "Environment \n(temperature, pressure, humidity, altitude)\n" + environmentDesc , preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
@@ -86,7 +86,7 @@ func windOnOffAlert(_ sender: ViewController)
         windDesc = "Off"
        // sender.windButton.tintColor = UIColor.red
     }
-    let alert = UIAlertController(title: "", message: "Wind " + windDesc, preferredStyle: .alert)
+    let alert = UIAlertController(title: "", message: "Wind Compensation " + windDesc, preferredStyle: .alert)
     
     alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
     
@@ -115,27 +115,7 @@ func bearingLockedAlert(_ sender: ViewController)
 }
 
 // Distance Missing Alert
-func microphoneAlert(_ sender: ViewController)
-{
-    var microphoneDesc : String
-    if(sender.microphoneOn)
-    {
-        microphoneDesc = "On"
-       // sender.microphoneButton.tintColor = UIColor.red
-    }
-    else
-    {
-        microphoneDesc = "Off"
-       // sender.microphoneButton.tintColor = sender.view.tintColor
-    }
-    let alert = UIAlertController(title: "Microphone " + microphoneDesc, message: "Do not leave microphone on while not in use.\n" +
-            "Tap the map to toggle microphone without alerts.", preferredStyle: .alert)
-    
-    alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-    
-    sender.present(alert, animated: true)
-    
-}
+
 
 // Ballistics data popup alert
 func alertBallistics(_ sender: ViewController)
